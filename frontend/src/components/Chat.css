@@ -1,0 +1,258 @@
+/* =========================
+   ROOT CHAT CONTAINER
+========================= */
+.mindwell-chat {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(180deg, #0f172a, #020617);
+  color: #e5e7eb;
+}
+
+/* =========================
+   CHAT MESSAGES AREA
+========================= */
+.mindwell-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 24px;
+  background-color: #0f172a;
+}
+
+/* =========================
+   MESSAGE ROW (LEFT / RIGHT)
+========================= */
+.message-row {
+  display: flex;
+  margin-bottom: 22px;
+  background: #0f172a;
+}
+
+.message-row.bot {
+  justify-content: flex-start;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+/* =========================
+   MESSAGE CONTENT (🔥 FIX)
+========================= */
+.mindwell-message-content {
+  display: inline-flex;          /* 🔥 shrink wrap */
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 75%;
+  background: transparent;
+}
+
+/* Reverse avatar + bubble for user */
+.message-row.user .mindwell-message-content {
+  flex-direction: row-reverse;
+}
+
+/* =========================
+   AVATAR
+========================= */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.message-row.user .avatar {
+  background: linear-gradient(135deg, #64748b, #475569);
+}
+
+.avatar img {
+  width: 20px;
+  height: 20px;
+}
+
+/* =========================
+   CHAT BUBBLES (PERFECT)
+========================= */
+.bubble {
+  padding: 16px 20px;
+  border-radius: 18px;
+  font-size: 15.5px;
+  line-height: 1.7;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+  animation: fadeIn 0.25s ease;
+}
+
+/* Bot bubble */
+.bubble.bot {
+  border-bottom-left-radius: 6px;
+}
+
+/* User bubble */
+.bubble.user {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 14px 40px rgba(99,102,241,0.55);
+}
+
+/* Dark mode bot bubble */
+.mindwell-chat.dark .bubble.bot {
+  background: #020617;
+  color: #e5e7eb;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.65);
+}
+
+/* =========================
+   AUTHOR
+========================= */
+.author {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+/* =========================
+   TYPING INDICATOR
+========================= */
+.typing {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* =========================
+   INPUT BAR
+========================= */
+.input-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  background: linear-gradient(
+    to top,
+    rgba(2,6,23,0.95),
+    rgba(2,6,23,0.75)
+  );
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================
+   INPUT ELEMENTS
+========================= */
+.input-bar textarea {
+  flex: 1;
+  border: none;
+  resize: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #e5e7eb;
+}
+
+.input-bar textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* =========================
+   LANGUAGE SELECT
+========================= */
+.input-bar select {
+  border: none;
+  outline: none;
+  background: rgba(99,102,241,0.2);
+  color: #c7d2fe;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* =========================
+   ICON BUTTONS
+========================= */
+.input-bar button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  color: #6366f1;
+  transition: all 0.25s ease;
+}
+
+.input-bar button:hover {
+  background: rgba(99,102,241,0.15);
+  transform: scale(1.12);
+}
+
+/* =========================
+   SEND BUTTON
+========================= */
+.send {
+  background: #1f2937;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.send.active {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 14px 40px rgba(99,102,241,0.65);
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .mindwell-message-content {
+    max-width: 90%;
+  }
+
+  .mindwell-messages {
+    padding: 24px 16px;
+  }
+}
+.bubble ul,
+.bubble ol {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.bubble li {
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
