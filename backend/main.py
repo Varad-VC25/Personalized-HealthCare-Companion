@@ -8,7 +8,7 @@ import secrets
 import time
 import threading
 
-# ✅ Translator (Python 3.13 compatible)
+# Translator
 from deep_translator import GoogleTranslator
 
 app = FastAPI()
@@ -29,12 +29,28 @@ app.add_middleware(
 # ---------------- CONSTANTS ----------------
 
 SYSTEM_PROMPT = (
-    "You are a calm, kind, and emotionally supportive mental health assistant. "
-    "Reply in 2–5 short, empathetic sentences. "
-    "Do NOT answer technical, political, or unrelated questions."
+    "You are an empathetic, calm, and emotionally supportive mental health companion. "
+    "Your primary role is to listen deeply, validate emotions, and respond with warmth and care. "
+
+    "Always acknowledge the user's feelings first before anything else. "
+    "Use gentle, human language that makes the user feel heard and understood. "
+    "Avoid being clinical, robotic, or overly technical. "
+
+    "Do NOT give medical diagnoses, do NOT prescribe medication, "
+    "and do NOT encourage harmful behavior. "
+    "If the user expresses distress, sadness, anxiety, loneliness, or overwhelm, "
+    "respond with compassion, reassurance, and emotional validation. "
+
+    "Encourage reflection using soft, open-ended questions. "
+    "Ask at most ONE gentle follow-up question per reply. "
+
+    "Keep responses between 2 to 5 short, emotionally rich sentences. "
+    "Never judge, never shame, never dismiss feelings. "
+    "If a question is political, technical, or unrelated to mental well-being, "
+    "politely redirect the conversation back to emotional support."
 )
 
-MODEL_NAME = "mistral"
+MODEL_NAME = "llama3:8b"
 OLLAMA_URL = "http://127.0.0.1:11434/v1/chat/completions"
 
 LANG_CODE_MAP = {
@@ -50,12 +66,14 @@ def warm_up_model():
         payload = {
             "model": MODEL_NAME,
             "messages": [
-                {"role": "system", "content": "You are a mental health assistant."},
+                {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": "Hello"}
-            ]
+            ],
+            "temperature": 0.8,
+            "top_p": 0.9
         }
         requests.post(OLLAMA_URL, json=payload, timeout=30)
-        print("✅ Ollama warmed up")
+        print("✅ LLaMA-3 warmed up")
     except Exception as e:
         print("⚠️ Warm-up failed:", e)
 
@@ -72,9 +90,9 @@ async def chat_endpoint(request: Request):
     source_lang = LANG_CODE_MAP.get(language_code, "en")
 
     if not user_message:
-        return {"reply": "I’m here whenever you want to talk 💙"}
+        return {"reply": "I’m here with you 💙 Take your time."}
 
-    # 1️⃣ Translate user input → English
+    # 1️⃣ Translate input → English
     user_message_en = user_message
     if source_lang != "en":
         user_message_en = GoogleTranslator(
@@ -82,23 +100,25 @@ async def chat_endpoint(request: Request):
             target="en"
         ).translate(user_message)
 
-    # 2️⃣ Send English to Phi
+    # 2️⃣ Send to LLaMA-3
     payload = {
         "model": MODEL_NAME,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_message_en}
-        ]
+        ],
+        "temperature": 0.8,
+        "top_p": 0.9
     }
 
     try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=50)
+        response = requests.post(OLLAMA_URL, json=payload, timeout=60)
         response.raise_for_status()
 
         result = response.json()
         bot_reply_en = result["choices"][0]["message"]["content"]
 
-        # 3️⃣ Translate English → original language
+        # 3️⃣ Translate back → original language
         final_reply = bot_reply_en
         if source_lang != "en":
             final_reply = GoogleTranslator(
@@ -116,7 +136,7 @@ async def chat_endpoint(request: Request):
                 if source_lang == "mr"
                 else "अभी कुछ समस्या हो रही है 💙."
                 if source_lang == "hi"
-                else "I’m having trouble right now 💙."
+                else "I’m having a little trouble right now, but I’m still here 💙."
             )
         }
 
