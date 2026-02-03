@@ -1,156 +1,199 @@
 /* =========================
-   ROOT CHAT CONTAINER
+   ROOT CONTAINER
 ========================= */
 .mindwell-chat {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  font-family: "Inter", system-ui, sans-serif;
-  background: linear-gradient(180deg, #0f172a, #020617);
+  background: radial-gradient(
+    circle at top,
+    #0b1225 0%,
+    #020617 45%,
+    #020617 100%
+  );
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   color: #e5e7eb;
+  position: relative;
+  overflow: hidden;
 }
 
 /* =========================
-   CHAT MESSAGES AREA
+   CHAT SCROLL AREA
 ========================= */
 .mindwell-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 32px 24px;
-  background-color: #0f172a;
+  padding: 40px 28px 140px;
+  scroll-behavior: smooth;
+}
+
+/* Smooth scrollbar */
+.mindwell-messages::-webkit-scrollbar {
+  width: 6px;
+}
+.mindwell-messages::-webkit-scrollbar-thumb {
+  background: rgba(99,102,241,0.35);
+  border-radius: 999px;
 }
 
 /* =========================
-   MESSAGE ROW (LEFT / RIGHT)
+   MESSAGE ROW
 ========================= */
 .message-row {
   display: flex;
-  margin-bottom: 22px;
-  background: #0f172a;
+  gap: 14px;
+  margin-bottom: 26px;
+  width: 100%;
 }
 
+/* Bot = left */
 .message-row.bot {
   justify-content: flex-start;
 }
 
+/* User = right */
 .message-row.user {
   justify-content: flex-end;
-}
-
-/* =========================
-   MESSAGE CONTENT (🔥 FIX)
-========================= */
-.mindwell-message-content {
-  display: inline-flex;          /* 🔥 shrink wrap */
-  align-items: flex-start;
-  gap: 12px;
-  max-width: 75%;
-  background: transparent;
-}
-
-/* Reverse avatar + bubble for user */
-.message-row.user .mindwell-message-content {
-  flex-direction: row-reverse;
 }
 
 /* =========================
    AVATAR
 ========================= */
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: white;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  background: linear-gradient(135deg, #6366f1, #38bdf8);
+  box-shadow:
+    0 0 0 2px rgba(99,102,241,0.35),
+    0 12px 32px rgba(99,102,241,0.55);
 }
 
 .message-row.user .avatar {
-  background: linear-gradient(135deg, #64748b, #475569);
+  background: linear-gradient(135deg, #475569, #1e293b);
+  box-shadow:
+    0 0 0 2px rgba(148,163,184,0.35),
+    0 12px 28px rgba(0,0,0,0.6);
 }
 
 .avatar img {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
 /* =========================
-   CHAT BUBBLES (PERFECT)
+   CHAT BUBBLES
 ========================= */
 .bubble {
-  padding: 16px 20px;
-  border-radius: 18px;
-  font-size: 15.5px;
-  line-height: 1.7;
-  background: #ffffff;
-  color: #111827;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.08);
-  animation: fadeIn 0.25s ease;
+  max-width: 72%;
+  padding: 18px 22px;
+  border-radius: 20px;
+  font-size: 15.8px;
+  line-height: 1.75;
+  animation: bubbleIn 0.28s cubic-bezier(.2,.8,.2,1);
+  position: relative;
 }
 
-/* Bot bubble */
+/* BOT BUBBLE – GLASS CARD */
 .bubble.bot {
+  background: linear-gradient(
+    180deg,
+    rgba(241,245,249,0.95),
+    rgba(226,232,240,0.92)
+  );
+  color: #020617;
   border-bottom-left-radius: 6px;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
-/* User bubble */
+/* USER BUBBLE – NEON */
 .bubble.user {
   background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: white;
+  color: #ffffff;
   border-bottom-right-radius: 6px;
-  box-shadow: 0 14px 40px rgba(99,102,241,0.55);
-}
-
-/* Dark mode bot bubble */
-.mindwell-chat.dark .bubble.bot {
-  background: #020617;
-  color: #e5e7eb;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.65);
+  box-shadow:
+    0 22px 65px rgba(99,102,241,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
 /* =========================
-   AUTHOR
+   AUTHOR LABEL
 ========================= */
 .author {
+  display: block;
   font-size: 12px;
   font-weight: 600;
-  opacity: 0.6;
+  opacity: 0.55;
   margin-bottom: 6px;
+  letter-spacing: 0.3px;
 }
 
 /* =========================
-   TYPING INDICATOR
+   MARKDOWN BEAUTY
+========================= */
+.bubble p {
+  margin: 0 0 12px;
+}
+.bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.bubble ul,
+.bubble ol {
+  margin: 12px 0 12px 22px;
+}
+
+.bubble li {
+  margin-bottom: 8px;
+}
+
+.bubble strong {
+  font-weight: 600;
+}
+
+.bubble code {
+  background: rgba(0,0,0,0.08);
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* =========================
+   TYPING
 ========================= */
 .typing {
   font-style: italic;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 /* =========================
-   INPUT BAR
+   INPUT BAR (FLOATING GLASS)
 ========================= */
 .input-bar {
   position: sticky;
   bottom: 0;
-  z-index: 10;
+  z-index: 50;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 18px 20px;
+  gap: 14px;
+  padding: 20px 22px;
   background: linear-gradient(
     to top,
-    rgba(2,6,23,0.95),
+    rgba(2,6,23,0.96),
     rgba(2,6,23,0.75)
   );
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(22px);
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 /* =========================
-   INPUT ELEMENTS
+   TEXTAREA
 ========================= */
 .input-bar textarea {
   flex: 1;
@@ -158,7 +201,7 @@
   resize: none;
   outline: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 15.5px;
   line-height: 1.6;
   color: #e5e7eb;
 }
@@ -173,9 +216,9 @@
 .input-bar select {
   border: none;
   outline: none;
-  background: rgba(99,102,241,0.2);
+  background: rgba(99,102,241,0.22);
   color: #c7d2fe;
-  padding: 6px 12px;
+  padding: 6px 16px;
   border-radius: 999px;
   font-size: 13px;
   cursor: pointer;
@@ -185,8 +228,8 @@
    ICON BUTTONS
 ========================= */
 .input-bar button {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: none;
   background: transparent;
@@ -194,13 +237,26 @@
   display: grid;
   place-items: center;
   font-size: 18px;
-  color: #6366f1;
+  color: #818cf8;
   transition: all 0.25s ease;
 }
 
 .input-bar button:hover {
-  background: rgba(99,102,241,0.15);
-  transform: scale(1.12);
+  background: rgba(99,102,241,0.18);
+  transform: scale(1.15);
+}
+
+/* =========================
+   MIC PULSE
+========================= */
+.mic.listening {
+  animation: micPulse 1.5s infinite;
+}
+
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.6); }
+  70% { box-shadow: 0 0 0 18px rgba(99,102,241,0); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
 }
 
 /* =========================
@@ -216,43 +272,32 @@
   background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: white;
   cursor: pointer;
-  box-shadow: 0 14px 40px rgba(99,102,241,0.65);
+  box-shadow: 0 20px 60px rgba(99,102,241,0.75);
 }
 
 /* =========================
-   ANIMATION
+   ANIMATIONS
 ========================= */
-@keyframes fadeIn {
+@keyframes bubbleIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 /* =========================
-   RESPONSIVE
+   MOBILE
 ========================= */
 @media (max-width: 768px) {
-  .mindwell-message-content {
+  .bubble {
     max-width: 90%;
   }
 
   .mindwell-messages {
-    padding: 24px 16px;
+    padding: 26px 16px 130px;
   }
 }
-.bubble ul,
-.bubble ol {
-  padding-left: 20px;
-  margin-top: 8px;
-}
-
-.bubble li {
-  margin-bottom: 6px;
-  line-height: 1.6;
-}
-

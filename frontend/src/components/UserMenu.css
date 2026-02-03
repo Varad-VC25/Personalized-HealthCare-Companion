@@ -1,44 +1,191 @@
-
-
+/* ============================
+   USER MENU ROOT
+============================ */
 .user-menu {
-  position: absolute;
-  top: 12px;
-  right: 16px;
+  position: relative;
+  z-index: 100000;
 }
 
-.user-button {
-  background: transparent;
+/* ============================
+   AVATAR BUTTON
+============================ */
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   border: none;
+  background: #020617;
   cursor: pointer;
-  color: #333;
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: white;
+  overflow: visible;
+  transition: transform 0.25s ease;
 }
 
-.dropdown {
+.user-avatar:hover {
+  transform: scale(1.06);
+}
+
+/* Initial Letter */
+.avatar-text {
+  font-weight: 700;
+  font-size: 16px;
+  z-index: 3;
+}
+
+/* ============================
+   GLOWING RING
+============================ */
+.user-avatar::before {
+  content: "";
   position: absolute;
-  top: 40px;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  min-width: 180px;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #38bdf8,
+    #22d3ee
+  );
+  filter: blur(8px);
+  opacity: 0.85;
+  animation: glowPulse 2.8s infinite;
+  z-index: 1;
 }
 
-.dropdown button {
+@keyframes glowPulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+/* ============================
+   DROPDOWN PANEL
+============================ */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: 260px;
+  padding: 14px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(15,23,42,0.96),
+    rgba(2,6,23,0.96)
+  );
+
+  backdrop-filter: blur(22px);
+  box-shadow:
+    0 50px 140px rgba(0,0,0,0.85),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+
+  animation: dropdownIn 0.28s ease;
+}
+
+/* ============================
+   HEADER
+============================ */
+.user-dropdown-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 16px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: #333;
-  font-size: 14px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-.dropdown button:hover {
-  background: #f5f5f5;
+.avatar-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.user-dropdown-header h4 {
+  margin: 0;
+  color: #e5e7eb;
+}
+
+.user-dropdown-header p {
+  margin: 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* ============================
+   MENU BUTTONS
+============================ */
+.user-dropdown button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.user-dropdown button:hover {
+  background: rgba(99,102,241,0.18);
+  transform: translateX(4px);
+}
+
+/* ============================
+   DIVIDER
+============================ */
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 10px 0;
+}
+
+/* ============================
+   DANGER BUTTON
+============================ */
+.user-dropdown .danger {
+  color: #f87171;
+}
+
+.user-dropdown .danger:hover {
+  background: rgba(248,113,113,0.16);
+}
+
+/* ============================
+   LOGOUT BUTTON
+============================ */
+.user-dropdown .logout {
+  margin-top: 6px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 14px 40px rgba(99,102,241,0.6);
+}
+
+.user-dropdown .logout:hover {
+  transform: scale(1.05);
+}
+
+/* ============================
+   ANIMATIONS
+============================ */
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
