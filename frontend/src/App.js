@@ -29,7 +29,6 @@ function App() {
   const [showChatbot, setShowChatbot] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
-  // 🔥 NEW: store logged-in email
   const [userEmail, setUserEmail] = useState("");
 
   const { darkMode } = useContext(ThemeContext);
@@ -38,7 +37,7 @@ function App() {
     setIsLoggedIn(false);
     setShowChatbot(false);
     setShowSidebar(false);
-    setUserEmail(""); // clear email on logout
+    setUserEmail("");
   };
 
   const toggleSidebar = () => {
@@ -50,8 +49,14 @@ function App() {
     setShowChatbot(false);
   };
 
+  // 🔥 THIS IS THE KEY FUNCTION
+  const openChatbot = () => {
+    setShowChatbot(true);
+    setShowSidebar(false);
+  };
+
   /* =========================
-     AUTH SCREENS
+     AUTH
   ========================= */
   if (!isLoggedIn) {
     return (
@@ -72,7 +77,6 @@ function App() {
               </>
             ) : (
               <>
-                {/* 🔥 RECEIVE EMAIL FROM LOGIN */}
                 <Login
                   onLoginSuccess={(email) => {
                     setIsLoggedIn(true);
@@ -170,7 +174,6 @@ function App() {
           </span>
         </div>
 
-        {/* 🔥 PASS EMAIL TO USER MENU */}
         <UserMenu
           showChatbot={showChatbot}
           setShowChatbot={setShowChatbot}
@@ -181,7 +184,11 @@ function App() {
 
       {/* MAIN CONTENT */}
       <div className="content-area">
-        {showChatbot ? <Chat /> : <Dashboard />}
+        {showChatbot ? (
+          <Chat />
+        ) : (
+          <Dashboard onOpenChat={openChatbot} />
+        )}
       </div>
     </div>
   );
