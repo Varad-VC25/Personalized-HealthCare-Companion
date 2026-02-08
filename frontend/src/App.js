@@ -1,89 +1,86 @@
-"use client";
-
-import { useState, useContext } from "react";
-import {
-  FiSearch,
-  FiLogOut,
-  FiEdit,
-  FiBook,
-  FiActivity,
-  FiBarChart2,
-  FiFolder,
-} from "react-icons/fi";
-
-import Signup from "./components/Signup";
+import React, { useState, useContext } from "react";
+import { ThemeContext } from "./ThemeContext";
 import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
 import UserMenu from "./components/UserMenu";
-import Dashboard from "./components/Dashboard";
-import DailyRoutine from "./components/DailyRoutine";
+import DailyRoutine from "./components/DailyRoutine"; // Assuming this exists or kept as placeholder
+import mediverseLogo from "./mediverseLogo.png";
+import doctorImage from "./doctor.png";
+
+// Icons
+import {
+  FiHome,
+  FiMessageSquare,
+  FiCalendar,
+  FiSettings,
+  FiMenu,
+  FiX,
+  FiActivity,
+  FiBookOpen,
+  FiLogOut,
+} from "react-icons/fi";
 
 import "./App.css";
-import doctorImage from "./doctor.png";
-import mediverseLogo from "./mediverseLogo.png";
-
-import { ThemeContext } from "./ThemeContext";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
-
-  // 🔥 CORE NAVIGATION STATE
-  const [activeModule, setActiveModule] = useState("dashboard");
-
+  const [activeModule, setActiveModule] = useState("dashboard"); // dashboard, chat, dailyRoutine
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userEmail, setUserEmail] = useState("");
+
+  // Theme context is used inside components, but App layout needs to structure the page
   const { darkMode } = useContext(ThemeContext);
+
+  const handleLoginSuccess = (email) => {
+    setUserEmail(email);
+    setIsLoggedIn(true);
+  };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setActiveModule("dashboard");
-    setShowSidebar(false);
     setUserEmail("");
   };
 
   const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const goToDashboard = () => {
-    setActiveModule("dashboard");
-    setShowSidebar(false);
+  const navigateTo = (moduleName) => {
+    setActiveModule(moduleName);
+    // On mobile, close sidebar after navigation
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
   };
 
-  /* =========================
-     AUTH
-  ========================= */
+  // Auth Screen
   if (!isLoggedIn) {
     return (
-      <div className="main-container">
+      <div className="auth-layout">
         <div className="auth-wrapper">
           <div className="auth-left">
-            <img src={doctorImage} alt="Doctor" />
+            <div className="auth-decoration"></div>
+            <img src={doctorImage} alt="Doctor" className="doctor-img" />
+            <div className="auth-welcome">
+              <h1>Welcome to MindWell</h1>
+              <p>Your personalized mental health companion.</p>
+            </div>
           </div>
-
           <div className="auth-right">
             {showSignup ? (
-              <>
-                <Signup onSignupSuccess={() => setShowSignup(false)} />
-                <p>
-                  Already have an account?{" "}
-                  <button onClick={() => setShowSignup(false)}>Log in</button>
-                </p>
-              </>
+              <Signup
+                onSignupSuccess={() => setShowSignup(false)}
+                onSwitch={() => setShowSignup(false)}
+              />
             ) : (
-              <>
-                <Login
-                  onLoginSuccess={(email) => {
-                    setIsLoggedIn(true);
-                    setUserEmail(email);
-                  }}
-                />
-                <p>
-                  Don&apos;t have an account?{" "}
-                  <button onClick={() => setShowSignup(true)}>Sign up</button>
-                </p>
-              </>
+              <Login
+                onLoginSuccess={handleLoginSuccess}
+                onSwitch={() => setShowSignup(true)}
+              />
             )}
           </div>
         </div>
@@ -91,107 +88,95 @@ function App() {
     );
   }
 
-  /* =========================
-     MAIN APP
-  ========================= */
   return (
-    <div className={`main-container ${darkMode ? "dark" : ""}`}>
-      {showSidebar && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setShowSidebar(false)}
-        />
-      )}
-
-      {/* SIDEBAR */}
-      <div className={`sidebar ${showSidebar ? "sidebar-open" : ""}`}>
+    <div
+      className={`app-container ${isSidebarOpen ? "sidebar-expanded" : "sidebar-collapsed"}`}
+    >
+      {/* Sidebar */}
+      <aside className="sidebar">
         <div className="sidebar-header">
-          <img
-            src={mediverseLogo}
-            alt="MindWell Logo"
-            className="logo-img clickable"
-            onClick={toggleSidebar}
-          />
-          <span className="sidebar-title">MindWell</span>
+          <img src={mediverseLogo} alt="MindWell" className="app-logo" />
+          {isSidebarOpen && <span className="app-name">MindWell</span>}
         </div>
 
-        <div className="sidebar-menu">
-          <div className="sidebar-item">
-            <FiEdit color="#8395eb" />
-            <span>New therapy session</span>
-          </div>
+        <nav className="sidebar-nav">
+          <button
+            className={`nav-item ${activeModule === "dashboard" ? "active" : ""}`}
+            onClick={() => navigateTo("dashboard")}
+          >
+            <FiHome size={20} />
+            {isSidebarOpen && <span>Dashboard</span>}
+          </button>
 
-          <div className="sidebar-item">
-            <FiSearch color="#8395eb" />
-            <span>Search conversations</span>
-          </div>
+          <button
+            className={`nav-item ${activeModule === "chat" ? "active" : ""}`}
+            onClick={() => navigateTo("chat")}
+          >
+            <FiMessageSquare size={20} />
+            {isSidebarOpen && <span>Therapist AI</span>}
+          </button>
 
-          <div className="sidebar-item">
-            <FiBook color="#8395eb" />
-            <span>Mental health library</span>
-          </div>
+          <button
+            className={`nav-item ${activeModule === "dailyRoutine" ? "active" : ""}`}
+            onClick={() => navigateTo("dailyRoutine")}
+          >
+            <FiCalendar size={20} />
+            {isSidebarOpen && <span>Daily Routine</span>}
+          </button>
 
-          <div className="sidebar-item">
-            <FiActivity color="#8395eb" />
-            <span>Mindfulness exercises</span>
-          </div>
+          <button className="nav-item">
+            <FiActivity size={20} />
+            {isSidebarOpen && <span>Progress</span>}
+          </button>
 
-          <div className="sidebar-item">
-            <FiBarChart2 color="#8395eb" />
-            <span>Progress tracking</span>
-          </div>
-
-          <div className="sidebar-item">
-            <FiFolder color="#8395eb" />
-            <span>My sessions</span>
-            <span className="sidebar-badge">NEW</span>
-          </div>
-        </div>
+          <button className="nav-item">
+            <FiBookOpen size={20} />
+            {isSidebarOpen && <span>Resources</span>}
+          </button>
+        </nav>
 
         <div className="sidebar-footer">
-          <div className="sidebar-item sidebar-logout" onClick={handleLogout}>
-            <FiLogOut />
-            <span>Log out</span>
+          <button className="nav-item logout-btn" onClick={handleLogout}>
+            <FiLogOut size={20} />
+            {isSidebarOpen && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="main-content">
+        {/* Navbar */}
+        <header className="navbar">
+          <div className="navbar-left">
+            <button className="menu-toggle" onClick={toggleSidebar}>
+              {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            </button>
+            <h2 className="page-title">
+              {activeModule === "dashboard" && "Dashboard"}
+              {activeModule === "chat" && "MindWell Therapist"}
+              {activeModule === "dailyRoutine" && "Daily Routine"}
+            </h2>
           </div>
+
+          <div className="navbar-right">
+            {/* User Menu passes navigation handler to enable Chat from dropdown */}
+            <UserMenu
+              userEmail={userEmail}
+              onLogout={handleLogout}
+              onEnableChat={() => navigateTo("chat")}
+            />
+          </div>
+        </header>
+
+        {/* Dynamic Content */}
+        <div className="content-scrollable">
+          {activeModule === "dashboard" && (
+            <Dashboard onNavigate={navigateTo} />
+          )}
+          {activeModule === "chat" && <Chat />}
+          {activeModule === "dailyRoutine" && <DailyRoutine />}
         </div>
-      </div>
-
-      {/* TOP BAR */}
-      <div className="top-bar">
-        <div className="logo-container">
-          <img
-            src={mediverseLogo}
-            alt="MindWell Logo"
-            className="logo-img clickable"
-            onClick={toggleSidebar}
-          />
-          <span className="logo-text" onClick={goToDashboard}>
-            MindWell
-          </span>
-        </div>
-
-        <UserMenu
-          onLogout={handleLogout}
-          userEmail={userEmail}
-          onOpenChat={() => setActiveModule("chat")}
-        />
-      </div>
-
-      {/* MAIN CONTENT */}
-      <div className="content-area">
-        {activeModule === "dashboard" && (
-          <Dashboard
-            onOpenChat={() => setActiveModule("chat")}
-            onOpenDailyRoutine={() => setActiveModule("dailyRoutine")}
-          />
-        )}
-
-        {activeModule === "chat" && <Chat />}
-
-        {activeModule === "dailyRoutine" && (
-          <DailyRoutine onBack={() => setActiveModule("dashboard")} />
-        )}
-      </div>
+      </main>
     </div>
   );
 }

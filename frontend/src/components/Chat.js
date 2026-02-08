@@ -1,181 +1,297 @@
-"use client";
-
-import { useState, useEffect, useRef, useContext } from "react";
-import { FiSend, FiPaperclip, FiUser } from "react-icons/fi";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkEmoji from "remark-emoji";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  FiSend,
+  FiCpu,
+  FiUser,
+  FiMic,
+  FiMicOff,
+  FiGlobe,
+  FiCheck,
+} from "react-icons/fi";
 import mediverseLogo from "../mediverseLogo.png";
-import { ThemeContext } from "../ThemeContext";
 import "./Chat.css";
 
-const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
-
-function Chat({ chatId }) {
+function Chat() {
   const [messages, setMessages] = useState([
     {
-      text: "Hi! I'm your MindWell AI assistant. How can I support you today? 💙",
+      text: "Hello, I am MindWell AI, your personal therapeutic companion. How are you feeling today?",
       sender: "bot",
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [listening, setListening] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [language, setLanguage] = useState("en-US");
+  const [showLangMenu, setShowLangMenu] = useState(false);
 
-  const chatBoxRef = useRef(null);
-  const recognitionRef = useRef(null);
-  const ttsUnlockedRef = useRef(false);
-  const { darkMode } = useContext(ThemeContext);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+  const langMenuRef = useRef(null);
 
-  /* Auto scroll */
+  const languages = [
+    { code: "en-US", name: "English (US)" },
+    { code: "en-GB", name: "English (UK)" },
+    { code: "es-ES", name: "Spanish" },
+    { code: "fr-FR", name: "French" },
+    { code: "de-DE", name: "German" },
+    { code: "hi-IN", name: "Hindi" },
+    { code: "zh-CN", name: "Chinese" },
+    { code: "ja-JP", name: "Japanese" },
+  ];
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
-    chatBoxRef.current?.scrollTo({
-      top: chatBoxRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [messages]);
+    scrollToBottom();
+  }, [messages, isLoading]);
 
-  /* Speech recognition setup */
   useEffect(() => {
-    if (!SpeechRecognition) return;
+    inputRef.current?.focus();
+
+    // Close lang menu on click outside
+    const handleClickOutside = (event) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setShowLangMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleMicClick = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert(
+        "Your browser does not support voice input. Please use Chrome or Edge.",
+      );
+      return;
+    }
+
+    if (isListening) {
+      // Logic to stop handled by the browser typically, but we can manage state
+      setIsListening(false);
+      return;
+    }
 
     const recognition = new SpeechRecognition();
     recognition.lang = language;
-    recognition.onstart = () => setListening(true);
-    recognition.onend = () => setListening(false);
-    recognition.onresult = (e) =>
-      setInput(e.results[0][0].transcript);
-    recognition.onerror = () => setListening(false);
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-    recognitionRef.current = recognition;
-  }, [language]);
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
 
-  /* Unlock TTS (browser requirement) */
-  const unlockTTS = () => {
-    if (ttsUnlockedRef.current) return;
-    window.speechSynthesis.speak(
-      new SpeechSynthesisUtterance(" ")
-    );
-    ttsUnlockedRef.current = true;
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      setIsListening(false);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInput((prev) => prev + (prev && transcript ? " " : "") + transcript);
+    };
+
+    recognition.start();
   };
 
-  const speakText = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-    utterance.rate = 0.95;
-    window.speechSynthesis.speak(utterance);
-  };
-
-  /* Send message */
-  const handleSend = async () => {
+  const handleSendMessage = async () => {
     if (!input.trim()) return;
 
-    unlockTTS();
+    const userMessage = {
+      text: input,
+      sender: "user",
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
 
-    const userMessage = input;
-    setMessages((prev) => [
-      ...prev,
-      { text: userMessage, sender: "user" },
-    ]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsTyping(true);
+    setIsLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/chat", {
+      // Backend call
+      const response = await fetch("http://127.0.0.1:8000/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: userMessage, language }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: userMessage.text,
+          language: language, // Sending language context if backend supports it
+        }),
       });
 
-      const data = await res.json();
-      const reply = data.reply || "I couldn't generate a response.";
+      const data = await response.json();
 
-      setMessages((prev) => [
-        ...prev,
-        { text: reply, sender: "bot" },
-      ]);
+      setTimeout(() => {
+        const botMessage = {
+          text: data.response || "I am listening. Please go on.",
+          sender: "bot",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+        setMessages((prev) => [...prev, botMessage]);
+        setIsLoading(false);
+      }, 600);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: "I'm having trouble connecting to my thought process right now. Please check your connection or try again in a moment.",
+            sender: "bot",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
+        ]);
+        setIsLoading(false);
+      }, 1000);
+    }
+  };
 
-      speakText(reply);
-    } catch {
-      speakText("There was an issue connecting to the server.");
-    } finally {
-      setIsTyping(false);
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
   return (
-    <div className={`mindwell-chat ${darkMode ? "dark" : ""}`}>
-      <div className="mindwell-messages" ref={chatBoxRef}>
-        {messages.map((msg, i) => (
-          <div key={i} className={`message-row ${msg.sender}`}>
-            <div className="avatar">
-              {msg.sender === "user" ? (
-                <FiUser />
+    <div className="chat-container">
+      <div className="chat-header-display">
+        <div className="header-left">
+          <div className="bot-status-indicator">
+            <div className="status-dot"></div>
+            <span>Online</span>
+          </div>
+        </div>
+
+        <div className="header-right" ref={langMenuRef}>
+          <button
+            className="lang-toggle-btn"
+            onClick={() => setShowLangMenu(!showLangMenu)}
+            title="Select Language"
+          >
+            <FiGlobe size={16} />
+            <span className="lang-code">
+              {languages
+                .find((l) => l.code === language)
+                ?.code.split("-")[0]
+                .toUpperCase()}
+            </span>
+          </button>
+
+          {showLangMenu && (
+            <div className="lang-dropdown">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  className={`lang-option ${language === lang.code ? "active" : ""}`}
+                  onClick={() => {
+                    setLanguage(lang.code);
+                    setShowLangMenu(false);
+                  }}
+                >
+                  <span>{lang.name}</span>
+                  {language === lang.code && <FiCheck size={14} />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="chat-safe-notice">
+        <p>This is a safe space. All conversations are private.</p>
+      </div>
+
+      <div className="messages-area">
+        {messages.map((msg, index) => (
+          <div key={index} className={`message-wrapper ${msg.sender}`}>
+            <div className="message-avatar">
+              {msg.sender === "bot" ? (
+                <img src={mediverseLogo} alt="AI" className="bot-img-avatar" />
               ) : (
-                <img src={mediverseLogo} alt="MindWell AI" />
+                <div className="user-icon-avatar">
+                  <FiUser />
+                </div>
               )}
             </div>
-
-            <div className={`bubble ${msg.sender}`}>
-              <span className="author">
-                {msg.sender === "user" ? "You" : "MindWell AI"}
-              </span>
-
-              {/* 🔥 MARKDOWN RENDERING */}
-              <ReactMarkdown remarkPlugins={[remarkGfm, remarkEmoji]}>
-  {msg.text}
-</ReactMarkdown>
-
+            <div className="message-bubble">
+              <p>{msg.text}</p>
+              <span className="timestamp">{msg.timestamp}</span>
             </div>
           </div>
         ))}
 
-        {isTyping && (
-          <div className="message-row bot">
-            <div className="avatar">
-              <img src={mediverseLogo} alt="Typing" />
+        {isLoading && (
+          <div className="message-wrapper bot">
+            <div className="message-avatar">
+              <img src={mediverseLogo} alt="AI" className="bot-img-avatar" />
             </div>
-            <div className="bubble bot typing">Typing…</div>
+            <div className="message-bubble typing-bubble">
+              <div className="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className="input-bar">
-        <FiPaperclip />
+      <div className="input-area">
+        <div className={`input-wrapper ${isListening ? "listening-mode" : ""}`}>
+          <button
+            className={`mic-btn ${isListening ? "listening" : ""}`}
+            onClick={handleMicClick}
+            title={isListening ? "Stop Listening" : "Start Voice Input"}
+          >
+            {isListening ? <FiMicOff size={20} /> : <FiMic size={20} />}
+            {isListening && <span className="mic-pulse"></span>}
+          </button>
 
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-        >
-          <option value="en-US">English</option>
-          <option value="hi-IN">Hindi</option>
-          <option value="mr-IN">Marathi</option>
-        </select>
+          <textarea
+            ref={inputRef}
+            placeholder={
+              isListening ? "Listening..." : "Type your feelings here..."
+            }
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyPress}
+            rows={1}
+            style={{ minHeight: "50px", maxHeight: "120px" }}
+          />
 
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your thoughts…"
-          onKeyDown={(e) =>
-            e.key === "Enter" && !e.shiftKey && handleSend()
-          }
-        />
-
-        <button
-          className={`mic ${listening ? "listening" : ""}`}
-          onClick={() => recognitionRef.current?.start()}
-        >
-          🎤
-        </button>
-
-        <button
-          className={`send ${input.trim() ? "active" : ""}`}
-          onClick={handleSend}
-        >
-          <FiSend />
-        </button>
+          <button
+            onClick={handleSendMessage}
+            className="send-btn"
+            disabled={!input.trim() && !isListening}
+          >
+            <FiSend size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );

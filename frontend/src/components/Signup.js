@@ -1,380 +1,189 @@
-// import React, { useState } from 'react';
+import React, { useState } from "react";
+import { FiMail, FiLock, FiCheck } from "react-icons/fi";
 
-// function Signup({ onSignupSuccess }) {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [confirmPassword, setConfirmPassword] = useState('');
-//   const [otpSent, setOtpSent] = useState(false);
-//   const [otp, setOtp] = useState('');
+const styles = {
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    gap: "15px",
+  },
+  inputGroup: { position: "relative" },
+  icon: {
+    position: "absolute",
+    top: "50%",
+    left: "15px",
+    transform: "translateY(-50%)",
+    color: "#64748b",
+  },
+  input: {
+    width: "100%",
+    padding: "14px 14px 14px 45px",
+    borderRadius: "12px",
+    border: "1px solid #e2e8f0",
+    fontSize: "1rem",
+    outline: "none",
+  },
+  button: {
+    padding: "14px",
+    borderRadius: "12px",
+    border: "none",
+    backgroundColor: "#0077b6",
+    color: "white",
+    fontSize: "1rem",
+    fontWeight: "600",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
+  switchBtn: {
+    background: "none",
+    border: "none",
+    color: "#0077b6",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+};
 
-//   const handleSendOtp = async () => {
-//     if (!email || !password || !confirmPassword) {
-//       return alert("Please fill all the fields");
-//     }
-//     if (password !== confirmPassword) {
-//       return alert("Passwords do not match");
-//     }
+function Signup({ onSignupSuccess, onSwitch }) {
+  const [step, setStep] = useState(1); // 1: details, 2: otp
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [otp, setOtp] = useState("");
 
-//     try {
-//       const response = await fetch('http://127.0.0.1:8000/send-otp', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ email })
-//       });
-
-//       const data = await response.json();
-//       if (response.ok && data.success) {
-//         alert("OTP sent to your email");
-//         setOtpSent(true);
-//       } else {
-//         alert(data.message || "Failed to send OTP");
-//       }
-//     } catch (error) {
-//       console.error("Error sending OTP:", error);
-//       alert("Error sending OTP");
-//     }
-//   };
-
-//   const handleVerifyAndSignup = async () => {
-//     if (!otp) return alert("Please enter OTP");
-
-//     try {
-//       const response = await fetch('http://127.0.0.1:8000/verify-otp', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ email, password, otp })
-//       });
-
-//       const data = await response.json();
-//       if (response.ok && data.success) {
-//         alert("Signup successful!");
-//         if (onSignupSuccess) onSignupSuccess();
-//       } else {
-//         alert(data.message || "OTP verification failed");
-//       }
-//     } catch (error) {
-//       console.error("Error verifying OTP:", error);
-//       alert("Error verifying OTP");
-//     }
-//   };
-
-//   return (
-//     <div className="auth-container">
-//       <h2>Signup</h2>
-//       {!otpSent ? (
-//         <>
-//           {/* <input
-//             type="email"
-//             placeholder="Email"
-//             value={email}
-//             onChange={(e) => setEmail(e.target.value)}
-//           /> */}
-//            {/* Email Field */}
-//            {/* Email Field */}
-//           <input
-//             type="email"
-//             placeholder="Email"
-//             value={email}
-//             onChange={(e) => setEmail(e.target.value)}
-//           />
-
-//           {/* Email validation */}
-//           {email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
-//             <span
-//               style={{
-//                 color: "red",
-//                 fontSize: "14px",
-//                 display: "block",
-//                 marginTop: "5px",
-//                 marginLeft: "18px",  
-//                 textAlign: "left"
-//               }}
-//             >
-//               Please enter a valid email address
-//             </span>
-//           )}
-
-
-//           <br />
-
-
-//           {/* <input
-//             type="password"
-//             placeholder="Password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//           /><br />
-//           <input
-//             type="password"
-//             placeholder="Confirm Password"
-//             value={confirmPassword}
-//             onChange={(e) => setConfirmPassword(e.target.value)}
-//           /> */}
-
-//           <input
-//             type="password"
-//             placeholder="Password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//           />
-
-//           {/* Password length validation */}
-//           {password && password.length < 8 && (
-//             <span style={{ color: "red", fontSize: "14px", display: "block", marginTop: "5px",textAlign: "left",  marginLeft: "18px" }}>
-//               Password must be at least 8 characters
-//             </span>
-//           )}
-
-//           {/* Special character validation */}
-//           {password && !/[!@#$%^&*(),.?":{}|<>]/.test(password) && (
-//             <span style={{ color: "red", fontSize: "14px", display: "block", marginTop: "5px",textAlign: "left",  marginLeft: "18px" }}>
-//               Password must contain at least one special character
-//             </span>
-//           )}
-
-//           {/* Confirm Password Field */}
-//           <input
-//             type="password"
-//             placeholder="Confirm Password"
-//             value={confirmPassword}
-//             onChange={(e) => setConfirmPassword(e.target.value)}
-//             style={{ marginTop: "12px" }}
-//           />
-
-//           {/* Confirm password match validation */}
-//           {confirmPassword && confirmPassword !== password && (
-//             <span style={{ color: "red", fontSize: "14px", display: "block", marginTop: "5px" }}>
-//               Passwords do not match
-//             </span>
-//           )}
-
-         
-
-          
-          
-//           <br />
-//           <button onClick={handleSendOtp}>Send OTP</button>
-//         </>
-//       ) : (
-//         <>
-//           <input
-//             type="text"
-//             placeholder="Enter OTP"
-//             value={otp}
-//             onChange={(e) => setOtp(e.target.value)}
-//           /><br />
-//           <button onClick={handleVerifyAndSignup}>Verify & Signup</button>
-//         </>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default Signup;
-
-
-import React, { useState } from 'react';
-
-
-function Signup({ onSignupSuccess }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [message, setMessage] = useState('');       // For success/error messages
-  const [messageType, setMessageType] = useState(''); // 'success' or 'error'
-
-  const handleSendOtp = async () => {
-    setMessage(''); // Clear previous messages
-    if (!email || !password || !confirmPassword) {
-      setMessage('Please fill all the fields');
-      setMessageType('error');
-      return;
-    }
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
-      setMessageType('error');
+      alert("Passwords do not match");
       return;
     }
-
+    // Call backend to send OTP
     try {
-      const response = await fetch('http://127.0.0.1:8000/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+      const response = await fetch("http://127.0.0.1:8000/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
-
       const data = await response.json();
-      if (response.ok && data.success) {
-        setMessage('OTP sent to your email');
-        setMessageType('success');
-        setOtpSent(true);
+      if (data.success) {
+        setStep(2);
       } else {
-        setMessage(data.message || 'Failed to send OTP');
-        setMessageType('error');
+        alert("Error sending OTP");
       }
-    } catch (error) {
-      console.error("Error sending OTP:", error);
-      setMessage('Error sending OTP');
-      setMessageType('error');
+    } catch (err) {
+      alert("Server error");
     }
   };
 
-  const handleVerifyAndSignup = async () => {
-    setMessage('');
-    if (!otp) {
-      setMessage('Please enter OTP');
-      setMessageType('error');
-      return;
-    }
-
+  const handleVerify = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:8000/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, otp })
+      const response = await fetch("http://127.0.0.1:8000/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, otp }),
       });
-
       const data = await response.json();
-      if (response.ok && data.success) {
-        setMessage('Signup successful!');
-        setMessageType('success');
-        if (onSignupSuccess) onSignupSuccess();
+      if (data.success) {
+        onSignupSuccess();
       } else {
-        setMessage(data.message || 'OTP verification failed');
-        setMessageType('error');
+        alert("Invalid OTP");
       }
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      setMessage('Error verifying OTP');
-      setMessageType('error');
+    } catch (err) {
+      alert("Verification failed");
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>Signup</h2>
+    <div style={{ width: "100%", maxWidth: "400px" }}>
+      <h2
+        style={{ fontSize: "1.8rem", marginBottom: "30px", color: "#1e293b" }}
+      >
+        {step === 1 ? "Create Account" : "Verify Email"}
+      </h2>
 
-      {!otpSent ? (
-        <>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {/* Email validation */}
-          {email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
-            <span style={{ color: 'red', fontSize: '14px', display: 'block', marginTop: '5px', marginLeft: '18px',textAlign: 'left' }}>
-              Please enter a valid email address
-            </span>
-          )}
-          <br />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-         
-
-          {password && password.length < 8 && (
-          <span
+      {step === 1 ? (
+        <form onSubmit={handleSendOtp} style={styles.form}>
+          <div style={styles.inputGroup}>
+            <FiMail style={styles.icon} />
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <FiLock style={styles.icon} />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <FiLock style={styles.icon} />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </div>
+          <button type="submit" style={styles.button}>
+            Send OTP
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleVerify} style={styles.form}>
+          <p style={{ marginBottom: "10px", color: "#64748b" }}>
+            Enter the code sent to {email}
+          </p>
+          <div style={styles.inputGroup}>
+            <FiCheck style={styles.icon} />
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              style={styles.input}
+              required
+            />
+          </div>
+          <button type="submit" style={styles.button}>
+            Verify & Create
+          </button>
+          <button
+            type="button"
+            onClick={() => setStep(1)}
             style={{
-              color: 'red',
-              fontSize: '14px',
-              display: 'block',
-              marginTop: '5px',
-              paddingLeft: '18px', // matches input padding
-              textAlign: 'left',
+              ...styles.switchBtn,
+              fontSize: "0.9rem",
+              marginTop: "10px",
             }}
           >
-            Password must be at least 8 characters
-          </span>
-          )}
-
-          {password && !/[!@#$%^&*(),.?":{}|<>]/.test(password) && (
-              <span
-                style={{
-                  color: 'red',
-                  fontSize: '14px',
-                  display: 'block',
-                  marginTop: '5px',
-                  paddingLeft: '18px', // matches input padding
-                  textAlign: 'left',
-                }}
-              >
-                Password must contain at least one special character
-              </span>
-            )}
-
-
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            style={{ marginTop: '12px' }}
-          />
-          {confirmPassword && confirmPassword !== password && (
-            <span style={{ color: 'red', fontSize: '14px', display: 'block', marginTop: '5px', marginLeft: '18px' }}>
-              Passwords do not match
-            </span>
-          )}
-
-          {/* Inline success/error message */}
-          {message && (
-            <span
-              style={{
-                color: messageType === 'success' ? 'green' : 'red',
-                fontSize: '14px',
-                display: 'block',
-                marginTop: '10px',
-                marginLeft: '18px'
-              }}
-            >
-              {message}
-            </span>
-          )}
-
-          <br />
-          <button onClick={handleSendOtp}>Send OTP</button>
-        </>
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-          <br />
-
-          {/* Inline success/error message for OTP verification */}
-          {message && (
-            <span
-              style={{
-                color: messageType === 'success' ? 'green' : 'red',
-                fontSize: '14px',
-                display: 'block',
-                marginTop: '10px',
-                marginLeft: '18px'
-              }}
-            >
-              {message}
-            </span>
-          )}
-
-          <button onClick={handleVerifyAndSignup} style={{ marginTop: '12px' }}>
-            Verify & Signup
+            Back
           </button>
-        </>
+        </form>
+      )}
+
+      {step === 1 && (
+        <p style={{ marginTop: "20px", textAlign: "center", color: "#64748b" }}>
+          Already have an account?{" "}
+          <button onClick={onSwitch} style={styles.switchBtn}>
+            Log In
+          </button>
+        </p>
       )}
     </div>
   );
 }
 
 export default Signup;
-

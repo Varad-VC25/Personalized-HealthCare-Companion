@@ -1,191 +1,154 @@
-/* ============================
-   USER MENU ROOT
-============================ */
-.user-menu {
+.user-menu-container {
   position: relative;
-  z-index: 100000;
 }
 
-/* ============================
-   AVATAR BUTTON
-============================ */
-.user-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background: #020617;
-  cursor: pointer;
-  position: relative;
-  display: grid;
-  place-items: center;
-  color: white;
-  overflow: visible;
-  transition: transform 0.25s ease;
-}
-
-.user-avatar:hover {
-  transform: scale(1.06);
-}
-
-/* Initial Letter */
-.avatar-text {
-  font-weight: 700;
-  font-size: 16px;
-  z-index: 3;
-}
-
-/* ============================
-   GLOWING RING
-============================ */
-.user-avatar::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    #6366f1,
-    #38bdf8,
-    #22d3ee
-  );
-  filter: blur(8px);
-  opacity: 0.85;
-  animation: glowPulse 2.8s infinite;
-  z-index: 1;
-}
-
-@keyframes glowPulse {
-  0% { opacity: 0.4; }
-  50% { opacity: 1; }
-  100% { opacity: 0.4; }
-}
-
-/* ============================
-   DROPDOWN PANEL
-============================ */
-.user-dropdown {
-  position: absolute;
-  top: calc(100% + 14px);
-  right: 0;
-  width: 260px;
-  padding: 14px;
-  border-radius: 18px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(15,23,42,0.96),
-    rgba(2,6,23,0.96)
-  );
-
-  backdrop-filter: blur(22px);
-  box-shadow:
-    0 50px 140px rgba(0,0,0,0.85),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-
-  animation: dropdownIn 0.28s ease;
-}
-
-/* ============================
-   HEADER
-============================ */
-.user-dropdown-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.avatar-large {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-}
-
-.user-dropdown-header h4 {
-  margin: 0;
-  color: #e5e7eb;
-}
-
-.user-dropdown-header p {
-  margin: 0;
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-/* ============================
-   MENU BUTTONS
-============================ */
-.user-dropdown button {
-  width: 100%;
+.user-avatar-btn {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 12px;
-  background: transparent;
+  background: none;
   border: none;
-  border-radius: 12px;
-  color: #e5e7eb;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.25s ease;
+  padding: 6px;
+  border-radius: 50px;
+  transition: background-color 0.2s;
 }
 
-.user-dropdown button:hover {
-  background: rgba(99,102,241,0.18);
-  transform: translateX(4px);
+.user-avatar-btn:hover {
+  background-color: var(--bg-primary);
 }
 
-/* ============================
-   DIVIDER
-============================ */
-.divider {
-  height: 1px;
-  background: rgba(255,255,255,0.08);
-  margin: 10px 0;
-}
-
-/* ============================
-   DANGER BUTTON
-============================ */
-.user-dropdown .danger {
-  color: #f87171;
-}
-
-.user-dropdown .danger:hover {
-  background: rgba(248,113,113,0.16);
-}
-
-/* ============================
-   LOGOUT BUTTON
-============================ */
-.user-dropdown .logout {
-  margin-top: 6px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-color), #4cc9f0);
   color: white;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-weight: 600;
-  box-shadow: 0 14px 40px rgba(99,102,241,0.6);
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: var(--shadow-md);
 }
 
-.user-dropdown .logout:hover {
-  transform: scale(1.05);
+.user-email-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: none;
 }
 
-/* ============================
-   ANIMATIONS
-============================ */
-@keyframes dropdownIn {
+@media (min-width: 1024px) {
+  .user-email-text {
+    display: block;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-avatar-btn {
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--border-color);
+  }
+}
+
+/* Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 280px;
+  background-color: var(--bg-secondary);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  z-index: 100;
+  animation: slideDown 0.2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.96);
+    transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
+}
+
+.dropdown-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: var(--bg-primary);
+}
+
+.avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.user-info .name {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.user-info .email {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 2px 0 0 0;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 0;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: var(--bg-primary);
+  color: var(--accent-color);
+}
+
+.dropdown-item .icon {
+  font-size: 1.1rem;
+}
+
+.dropdown-item.logout {
+  color: #ef4444;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
 }

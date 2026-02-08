@@ -1,98 +1,134 @@
-"use client";
-
+import React from "react";
 import {
-  FiMessageCircle,
+  FiMessageSquare,
+  FiCalendar,
   FiActivity,
   FiMoon,
-  FiDroplet,
-  FiBarChart2,
-  FiHeart,
-  FiCoffee,
-  FiCalendar,
   FiSmile,
-  FiTrendingUp
+  FiBook,
+  FiMusic,
+  FiUsers,
+  FiTrendingUp,
+  FiTarget,
 } from "react-icons/fi";
-
 import "./Dashboard.css";
 
-export default function Dashboard({ onOpenChat, onOpenDailyRoutine }) {
-  const cards = [
+function Dashboard({ onNavigate }) {
+  const modules = [
     {
+      id: "chat",
       title: "MindWell AI",
-      desc: "Talk to your mental health companion",
-      icon: <FiMessageCircle />,
-      primary: true,
-      action: onOpenChat
+      desc: "Chat with your personal AI therapist available 24/7.",
+      icon: <FiMessageSquare size={28} />,
+      color: "var(--accent-color)",
+      isPrimary: true,
     },
     {
-      title: "Workout Plan",
-      desc: "AI-powered personalized workouts",
-      icon: <FiActivity />
-    },
-    {
-      title: "Sleep Tracker",
-      desc: "Track rest & recovery",
-      icon: <FiMoon />
-    },
-    {
-      title: "Hydration",
-      desc: "Monitor daily water intake",
-      icon: <FiDroplet />
-    },
-    {
-      title: "Nutrition Planner",
-      desc: "AI-based diet & meal suggestions",
-      icon: <FiCoffee />
-    },
-    {
+      id: "dailyRoutine",
       title: "Daily Routine",
-      desc: "Plan your day for balance",
-      icon: <FiCalendar />,
-      action: onOpenDailyRoutine
+      desc: "Track your habits and maintain a healthy lifestyle.",
+      icon: <FiCalendar size={28} />,
+      color: "#10b981",
     },
     {
+      id: "mood",
       title: "Mood Tracker",
-      desc: "Log mood & emotional trends",
-      icon: <FiSmile />
+      desc: "Log your emotions and visualize your mental patterns.",
+      icon: <FiSmile size={28} />,
+      color: "#f59e0b",
     },
     {
-      title: "Mindfulness",
-      desc: "Relax with guided exercises",
-      icon: <FiHeart />
+      id: "meditation",
+      title: "Meditation",
+      desc: "Guided sessions to help you relax and focus.",
+      icon: <FiMoon size={28} />,
+      color: "#8b5cf6",
     },
     {
-      title: "Progress",
-      desc: "Track your health journey",
-      icon: <FiBarChart2 />
+      id: "journal",
+      title: "Journaling",
+      desc: "Write down your thoughts securely.",
+      icon: <FiBook size={28} />,
+      color: "#ec4899",
     },
     {
-      title: "Health Insights",
-      desc: "Weekly & monthly analysis",
-      icon: <FiTrendingUp />
-    }
+      id: "sleep",
+      title: "Sleep Health",
+      desc: "Analyze and improve your sleep quality.",
+      icon: <FiActivity size={28} />,
+      color: "#3b82f6",
+    },
+    {
+      id: "music",
+      title: "Calm Sounds",
+      desc: "Curated playlists for relaxation.",
+      icon: <FiMusic size={28} />,
+      color: "#14b8a6",
+    },
+    {
+      id: "community",
+      title: "Community",
+      desc: "Connect with others on similar journeys.",
+      icon: <FiUsers size={28} />,
+      color: "#f97316",
+    },
+    {
+      id: "goals",
+      title: "Goal Setting",
+      desc: "Set achievable mental health goals.",
+      icon: <FiTarget size={28} />,
+      color: "#ef4444",
+    },
+    {
+      id: "analytics",
+      title: "Insights",
+      desc: "Weekly reports on your progress.",
+      icon: <FiTrendingUp size={28} />,
+      color: "#6366f1",
+    },
   ];
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h1>Your Health Dashboard</h1>
-        <p>Personalized care for your mind and body</p>
+    <div className="dashboard-container">
+      <div className="dashboard-header-section">
+        <h1>Welcome Back!</h1>
+        <p>How are you feeling today? Explore your wellness modules.</p>
       </div>
 
-      <div className="dashboard-grid">
-        {cards.map((card, index) => (
+      <div className="modules-grid">
+        {modules.map((module) => (
           <div
-            key={index}
-            className={`dashboard-card ${card.primary ? "primary" : ""}`}
-            onClick={card.action}
+            key={module.id}
+            className={`module-card ${module.isPrimary ? "primary-card" : ""}`}
+            onClick={() =>
+              onNavigate(
+                module.id === "chat" || module.id === "dailyRoutine"
+                  ? module.id
+                  : "dashboard",
+              )
+            }
           >
-            <div className="card-icon">{card.icon}</div>
-            <h3>{card.title}</h3>
-            <p>{card.desc}</p>
-            <button>Open</button>
+            <div
+              className="card-icon"
+              style={{
+                backgroundColor: `${module.color}20`,
+                color: module.color,
+              }}
+            >
+              {module.icon}
+            </div>
+            <div className="card-content">
+              <h3>{module.title}</h3>
+              <p>{module.desc}</p>
+            </div>
+            {module.isPrimary && (
+              <button className="primary-btn">Start Session</button>
+            )}
           </div>
         ))}
       </div>
     </div>
   );
 }
+
+export default Dashboard;
