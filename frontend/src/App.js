@@ -9,6 +9,7 @@ import UserMenu from "./components/UserMenu";
 import DailyRoutine from "./components/DailyRoutine";
 import MoodTracker from "./components/MoodTracker";
 import Resources from "./components/Resources/Resources";
+import GoalSetting from "./components/GoalSetting"; // ✅ ADDED
 
 import mediverseLogo from "./mediverseLogo.png";
 import doctorImage from "./doctor.png";
@@ -23,6 +24,7 @@ import {
   FiLogOut,
   FiMenu,
   FiX,
+  FiTarget, // ✅ ADDED
 } from "react-icons/fi";
 
 import "./App.css";
@@ -109,9 +111,7 @@ function App() {
 
         <nav className="sidebar-nav">
           <button
-            className={`nav-item ${
-              activeModule === "dashboard" ? "active" : ""
-            }`}
+            className={`nav-item ${activeModule === "dashboard" ? "active" : ""}`}
             onClick={() => navigateTo("dashboard")}
           >
             <FiHome />
@@ -142,6 +142,15 @@ function App() {
           >
             <FiSmile />
             {isSidebarOpen && <span>Mood Tracker</span>}
+          </button>
+
+          {/* ✅ GOAL SETTING */}
+          <button
+            className={`nav-item ${activeModule === "goals" ? "active" : ""}`}
+            onClick={() => navigateTo("goals")}
+          >
+            <FiTarget />
+            {isSidebarOpen && <span>Goals</span>}
           </button>
 
           <button
@@ -182,6 +191,7 @@ function App() {
               {activeModule === "chat" && "MindWell Therapist"}
               {activeModule === "dailyRoutine" && "Daily Routine"}
               {activeModule === "mood" && "Mood Tracker"}
+              {activeModule === "goals" && "Goal Setting"}
               {activeModule === "resources" && "Resources"}
             </h2>
           </div>
@@ -206,6 +216,8 @@ function App() {
           {activeModule === "dailyRoutine" && <DailyRoutine />}
 
           {activeModule === "mood" && <MoodTracker />}
+
+          {activeModule === "goals" && <GoalSetting />} {/* ✅ CONNECTED */}
 
           {activeModule === "resources" && <Resources />}
         </div>

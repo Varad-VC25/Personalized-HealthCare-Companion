@@ -86,7 +86,6 @@ function Dashboard({ onNavigate }) {
       icon: <FiTrendingUp size={28} />,
       color: "#6366f1",
     },
-    
   ];
 
   return (
@@ -101,13 +100,7 @@ function Dashboard({ onNavigate }) {
           <div
             key={module.id}
             className={`module-card ${module.isPrimary ? "primary-card" : ""}`}
-            onClick={() =>
-              onNavigate(
-                module.id === "chat" || module.id === "dailyRoutine"
-                  ? module.id
-                  : "dashboard",
-              )
-            }
+            onClick={() => onNavigate(module.id)} 
           >
             <div
               className="card-icon"
@@ -118,10 +111,12 @@ function Dashboard({ onNavigate }) {
             >
               {module.icon}
             </div>
+
             <div className="card-content">
               <h3>{module.title}</h3>
               <p>{module.desc}</p>
             </div>
+
             {module.isPrimary && (
               <button className="primary-btn">Start Session</button>
             )}
