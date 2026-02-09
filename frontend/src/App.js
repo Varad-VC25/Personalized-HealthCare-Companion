@@ -122,9 +122,7 @@ function App() {
           </button>
 
           <button
-            className={`nav-item ${
-              activeModule === "chat" ? "active" : ""
-            }`}
+            className={`nav-item ${activeModule === "chat" ? "active" : ""}`}
             onClick={() => navigateTo("chat")}
           >
             <FiMessageSquare />
@@ -142,9 +140,7 @@ function App() {
           </button>
 
           <button
-            className={`nav-item ${
-              activeModule === "mood" ? "active" : ""
-            }`}
+            className={`nav-item ${activeModule === "mood" ? "active" : ""}`}
             onClick={() => navigateTo("mood")}
           >
             <FiSmile />
