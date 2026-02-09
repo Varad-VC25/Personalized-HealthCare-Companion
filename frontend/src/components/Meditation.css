@@ -1,0 +1,475 @@
+/* Variables for soft pastel theme */
+:root {
+    --med-bg-soft: #f8f9fa;
+    --med-card-bg: #ffffff;
+    --med-primary: #818cf8;
+    /* Soft Indigo */
+    --med-secondary: #c084fc;
+    /* Soft Purple */
+    --med-accent-blue: #60a5fa;
+    --med-accent-green: #34d399;
+    --med-accent-pink: #f472b6;
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+[data-theme='dark'] {
+    --med-bg-soft: #1e293b;
+    --med-card-bg: #334155;
+    --med-primary: #6366f1;
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.meditation-container {
+    padding: 32px;
+    height: 100%;
+    overflow-y: auto;
+    background: linear-gradient(180deg, var(--bg-primary) 0%, var(--med-bg-soft) 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.meditation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-text h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--med-primary), var(--med-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.recommendation-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    background: rgba(129, 140, 248, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.streak-card {
+    background: var(--med-card-bg);
+    padding: 15px 25px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+}
+
+.streak-icon {
+    font-size: 24px;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.15);
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+}
+
+.streak-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.streak-count {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.streak-sub {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Grid Layout */
+.meditation-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 32px;
+}
+
+@media (max-width: 1024px) {
+    .meditation-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.guided-section h2,
+.timer-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+/* Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.meditation-card {
+    background: var(--med-card-bg);
+    padding: 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid transparent;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.meditation-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-icon-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 16px;
+}
+
+/* Card Variants */
+.meditation-card.relax:hover {
+    border-color: var(--med-accent-blue);
+}
+
+.meditation-card.relax .card-icon-bg {
+    background: rgba(96, 165, 250, 0.15);
+    color: var(--med-accent-blue);
+}
+
+.meditation-card.stress:hover {
+    border-color: var(--med-accent-pink);
+}
+
+.meditation-card.stress .card-icon-bg {
+    background: rgba(244, 114, 182, 0.15);
+    color: var(--med-accent-pink);
+}
+
+.meditation-card.focus:hover {
+    border-color: var(--med-primary);
+}
+
+.meditation-card.focus .card-icon-bg {
+    background: rgba(129, 140, 248, 0.15);
+    color: var(--med-primary);
+}
+
+.meditation-card.sleep:hover {
+    border-color: var(--med-secondary);
+}
+
+.meditation-card.sleep .card-icon-bg {
+    background: rgba(192, 132, 252, 0.15);
+    color: var(--med-secondary);
+}
+
+.meditation-card h3 {
+    margin: 0 0 6px 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.meditation-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Timer Section */
+.timer-section {
+    background: var(--med-card-bg);
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+.timer-circle {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    border: 8px solid rgba(129, 140, 248, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0 40px 0;
+    position: relative;
+    transition: all 0.5s ease;
+}
+
+.timer-circle.breathing {
+    border-color: var(--med-primary);
+    animation: breathe 4s infinite ease-in-out;
+    box-shadow: 0 0 30px rgba(129, 140, 248, 0.3);
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.time-text {
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.status-text {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Timer Controls */
+.timer-setup {
+    width: 100%;
+    max-width: 200px;
+}
+
+.timer-setup label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.timer-setup input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.start-btn {
+    width: 100%;
+    background: var(--med-primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.3s;
+}
+
+.start-btn:hover {
+    background: var(--med-secondary);
+}
+
+.timer-controls {
+    display: flex;
+    gap: 20px;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s;
+}
+
+.control-btn.pause {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.control-btn.reset {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.control-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Mood Modal */
+.mood-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.mood-modal {
+    background: var(--med-card-bg);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.mood-options {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+}
+
+.mood-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.mood-btn span {
+    font-size: 0.9rem;
+}
+
+.mood-btn:hover {
+    transform: scale(1.1);
+}
+
+.mood-btn.happy:hover {
+    color: #22c55e;
+}
+
+.mood-btn.neutral:hover {
+    color: #f59e0b;
+}
+
+.mood-btn.sad:hover {
+    color: #ef4444;
+}
+
+.mood-insight {
+    color: var(--med-primary);
+    font-weight: 500;
+}
+
+/* Video Overlay */
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-container {
+    width: 80%;
+    max-width: 900px;
+    aspect-ratio: 16/9;
+    position: relative;
+    background: #000;
+}
+
+.close-video {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.video-controls {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.timer-display-overlay {
+    color: white;
+    font-size: 1.5rem;
+    font-family: monospace;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.control-btn.stop {
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    padding: 10px 20px;
+    background: #ef4444;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

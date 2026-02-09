@@ -8,6 +8,7 @@ import Chat from "./components/Chat";
 import UserMenu from "./components/UserMenu";
 import DailyRoutine from "./components/DailyRoutine";
 import MoodTracker from "./components/MoodTracker";
+import Meditation from "./components/Meditation"; // Imported Meditation
 
 import mediverseLogo from "./mediverseLogo.png";
 import doctorImage from "./doctor.png";
@@ -22,6 +23,7 @@ import {
   FiLogOut,
   FiMenu,
   FiX,
+  FiMoon, // Imported for Meditation icon
 } from "react-icons/fi";
 
 import "./App.css";
@@ -113,7 +115,7 @@ function App() {
             }`}
             onClick={() => navigateTo("dashboard")}
           >
-            <FiHome />
+            <FiHome size={20} />
             {isSidebarOpen && <span>Dashboard</span>}
           </button>
 
@@ -121,7 +123,7 @@ function App() {
             className={`nav-item ${activeModule === "chat" ? "active" : ""}`}
             onClick={() => navigateTo("chat")}
           >
-            <FiMessageSquare />
+            <FiMessageSquare size={20} />
             {isSidebarOpen && <span>Therapist AI</span>}
           </button>
 
@@ -131,33 +133,40 @@ function App() {
             }`}
             onClick={() => navigateTo("dailyRoutine")}
           >
-            <FiCalendar />
+            <FiCalendar size={20} />
             {isSidebarOpen && <span>Daily Routine</span>}
           </button>
 
-          {/* 🔥 MOOD TRACKER CONNECTED */}
+          <button
+            className={`nav-item ${activeModule === "meditation" ? "active" : ""}`}
+            onClick={() => navigateTo("meditation")}
+          >
+            <FiMoon size={20} />
+            {isSidebarOpen && <span>Meditation</span>}
+          </button>
+
           <button
             className={`nav-item ${activeModule === "mood" ? "active" : ""}`}
             onClick={() => navigateTo("mood")}
           >
-            <FiSmile />
+            <FiSmile size={20} />
             {isSidebarOpen && <span>Mood Tracker</span>}
           </button>
 
           <button className="nav-item">
-            <FiActivity />
+            <FiActivity size={20} />
             {isSidebarOpen && <span>Insights</span>}
           </button>
 
           <button className="nav-item">
-            <FiBookOpen />
+            <FiBookOpen size={20} />
             {isSidebarOpen && <span>Resources</span>}
           </button>
         </nav>
 
         <div className="sidebar-footer">
           <button className="nav-item logout-btn" onClick={handleLogout}>
-            <FiLogOut />
+            <FiLogOut size={20} />
             {isSidebarOpen && <span>Logout</span>}
           </button>
         </div>
@@ -169,7 +178,7 @@ function App() {
         <header className="navbar">
           <div className="navbar-left">
             <button className="menu-toggle" onClick={toggleSidebar}>
-              {isSidebarOpen ? <FiX /> : <FiMenu />}
+              {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
 
             <h2 className="page-title">
@@ -177,6 +186,7 @@ function App() {
               {activeModule === "chat" && "MindWell Therapist"}
               {activeModule === "dailyRoutine" && "Daily Routine"}
               {activeModule === "mood" && "Mood Tracker"}
+              {activeModule === "meditation" && "Meditation & Focus"}
             </h2>
           </div>
 
@@ -190,7 +200,10 @@ function App() {
         </header>
 
         {/* MODULE RENDERING */}
-        <div className="content-scrollable">
+        {/* Added 'chat-mode' class conditionally to handle full-height layout for Chat */}
+        <div
+          className={`content-scrollable ${activeModule === "chat" ? "chat-mode" : ""}`}
+        >
           {activeModule === "dashboard" && (
             <Dashboard onNavigate={navigateTo} />
           )}
@@ -200,6 +213,8 @@ function App() {
           {activeModule === "dailyRoutine" && <DailyRoutine />}
 
           {activeModule === "mood" && <MoodTracker />}
+
+          {activeModule === "meditation" && <Meditation />}
         </div>
       </main>
     </div>
