@@ -8,6 +8,7 @@ import Chat from "./components/Chat";
 import UserMenu from "./components/UserMenu";
 import DailyRoutine from "./components/DailyRoutine";
 import MoodTracker from "./components/MoodTracker";
+import Resources from "./components/Resources/Resources";
 
 import mediverseLogo from "./mediverseLogo.png";
 import doctorImage from "./doctor.png";
@@ -30,7 +31,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
-  // 🔥 CORE NAVIGATION
+  // 🔥 CORE NAVIGATION STATE
   const [activeModule, setActiveModule] = useState("dashboard");
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -50,7 +51,7 @@ function App() {
   };
 
   const toggleSidebar = () => {
-    setIsSidebarOpen((p) => !p);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   const navigateTo = (module) => {
@@ -135,7 +136,6 @@ function App() {
             {isSidebarOpen && <span>Daily Routine</span>}
           </button>
 
-          {/* 🔥 MOOD TRACKER CONNECTED */}
           <button
             className={`nav-item ${activeModule === "mood" ? "active" : ""}`}
             onClick={() => navigateTo("mood")}
@@ -144,14 +144,19 @@ function App() {
             {isSidebarOpen && <span>Mood Tracker</span>}
           </button>
 
-          <button className="nav-item">
-            <FiActivity />
-            {isSidebarOpen && <span>Insights</span>}
+          <button
+            className={`nav-item ${
+              activeModule === "resources" ? "active" : ""
+            }`}
+            onClick={() => navigateTo("resources")}
+          >
+            <FiBookOpen />
+            {isSidebarOpen && <span>Resources</span>}
           </button>
 
           <button className="nav-item">
-            <FiBookOpen />
-            {isSidebarOpen && <span>Resources</span>}
+            <FiActivity />
+            {isSidebarOpen && <span>Insights</span>}
           </button>
         </nav>
 
@@ -177,6 +182,7 @@ function App() {
               {activeModule === "chat" && "MindWell Therapist"}
               {activeModule === "dailyRoutine" && "Daily Routine"}
               {activeModule === "mood" && "Mood Tracker"}
+              {activeModule === "resources" && "Resources"}
             </h2>
           </div>
 
@@ -189,7 +195,7 @@ function App() {
           </div>
         </header>
 
-        {/* MODULE RENDERING */}
+        {/* MODULE RENDER */}
         <div className="content-scrollable">
           {activeModule === "dashboard" && (
             <Dashboard onNavigate={navigateTo} />
@@ -200,6 +206,8 @@ function App() {
           {activeModule === "dailyRoutine" && <DailyRoutine />}
 
           {activeModule === "mood" && <MoodTracker />}
+
+          {activeModule === "resources" && <Resources />}
         </div>
       </main>
     </div>
