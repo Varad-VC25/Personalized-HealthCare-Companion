@@ -130,11 +130,7 @@ function Dashboard({ onNavigate }) {
           <div
             key={module.id}
             className={`module-card ${module.isPrimary ? "primary-card" : ""}`}
-<<<<<<< HEAD
-            onClick={() => onNavigate(module.id)} 
-=======
             onClick={() => handleModuleClick(module.id)}
->>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
           >
             <div
               className="card-icon"

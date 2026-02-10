@@ -11,11 +11,8 @@ import MoodTracker from "./components/MoodTracker";
 import Journaling from "./components/Journaling";
 import CalmSounds from "./components/CalmSounds";
 import Resources from "./components/Resources/Resources";
-<<<<<<< HEAD
 import GoalSetting from "./components/GoalSetting"; // ✅ ADDED
-=======
 import Meditation from "./components/Meditation"; // Imported Meditation
->>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
 
 import mediverseLogo from "./mediverseLogo.png";
 import doctorImage from "./doctor.png";
@@ -30,11 +27,8 @@ import {
   FiLogOut,
   FiMenu,
   FiX,
-<<<<<<< HEAD
   FiTarget, // ✅ ADDED
-=======
   FiMoon, // Imported for Meditation icon
->>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
 } from "react-icons/fi";
 
 import "./App.css";
@@ -202,12 +196,9 @@ function App() {
               {activeModule === "dailyRoutine" && "Daily Routine"}
               {activeModule === "meditation" && "Meditation & Focus"}
               {activeModule === "mood" && "Mood Tracker"}
-<<<<<<< HEAD
               {activeModule === "goals" && "Goal Setting"}
-=======
               {activeModule === "journaling" && "Journaling"}
               {activeModule === "calmSounds" && "Calm Sounds"}
->>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
               {activeModule === "resources" && "Resources"}
             </h2>
           </div>
@@ -232,14 +223,11 @@ function App() {
           {activeModule === "dailyRoutine" && <DailyRoutine />}
           {activeModule === "meditation" && <Meditation />}
           {activeModule === "mood" && <MoodTracker />}
-<<<<<<< HEAD
 
           {activeModule === "goals" && <GoalSetting />} {/* ✅ CONNECTED */}
 
-=======
           {activeModule === "journaling" && <Journaling />}
           {activeModule === "calmSounds" && <CalmSounds />}
->>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
           {activeModule === "resources" && <Resources />}
         </div>
       </main>
