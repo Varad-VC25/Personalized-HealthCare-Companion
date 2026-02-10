@@ -21,7 +21,7 @@ function Dashboard({ onNavigate }) {
       title: "MindWell AI",
       desc: "Chat with your personal AI therapist available 24/7.",
       icon: <FiMessageSquare size={28} />,
-      color: "var(--accent-color)",
+      color: "#0077b6", // Fixed: Use Hex instead of var() for inline rgba alpha to work
       isPrimary: true,
     },
     {
