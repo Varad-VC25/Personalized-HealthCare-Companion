@@ -8,8 +8,14 @@ import Chat from "./components/Chat";
 import UserMenu from "./components/UserMenu";
 import DailyRoutine from "./components/DailyRoutine";
 import MoodTracker from "./components/MoodTracker";
+import Journaling from "./components/Journaling";
+import CalmSounds from "./components/CalmSounds";
 import Resources from "./components/Resources/Resources";
+<<<<<<< HEAD
 import GoalSetting from "./components/GoalSetting"; // ✅ ADDED
+=======
+import Meditation from "./components/Meditation"; // Imported Meditation
+>>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
 
 import mediverseLogo from "./mediverseLogo.png";
 import doctorImage from "./doctor.png";
@@ -24,7 +30,11 @@ import {
   FiLogOut,
   FiMenu,
   FiX,
+<<<<<<< HEAD
   FiTarget, // ✅ ADDED
+=======
+  FiMoon, // Imported for Meditation icon
+>>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
 } from "react-icons/fi";
 
 import "./App.css";
@@ -32,10 +42,7 @@ import "./App.css";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-
-  // 🔥 CORE NAVIGATION STATE
   const [activeModule, setActiveModule] = useState("dashboard");
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userEmail, setUserEmail] = useState("");
 
@@ -52,20 +59,13 @@ function App() {
     setUserEmail("");
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   const navigateTo = (module) => {
     setActiveModule(module);
-    if (window.innerWidth < 768) {
-      setIsSidebarOpen(false);
-    }
+    if (window.innerWidth < 768) setIsSidebarOpen(false);
   };
 
-  /* =========================
-     AUTH SCREENS
-  ========================= */
   if (!isLoggedIn) {
     return (
       <div className="auth-layout">
@@ -77,7 +77,6 @@ function App() {
               <p>Your personalized mental health companion</p>
             </div>
           </div>
-
           <div className="auth-right">
             {showSignup ? (
               <Signup onSignupSuccess={() => setShowSignup(false)} />
@@ -93,9 +92,6 @@ function App() {
     );
   }
 
-  /* =========================
-     MAIN APP
-  ========================= */
   return (
     <div
       className={`app-container ${
@@ -114,7 +110,7 @@ function App() {
             className={`nav-item ${activeModule === "dashboard" ? "active" : ""}`}
             onClick={() => navigateTo("dashboard")}
           >
-            <FiHome />
+            <FiHome size={20} />
             {isSidebarOpen && <span>Dashboard</span>}
           </button>
 
@@ -122,25 +118,31 @@ function App() {
             className={`nav-item ${activeModule === "chat" ? "active" : ""}`}
             onClick={() => navigateTo("chat")}
           >
-            <FiMessageSquare />
+            <FiMessageSquare size={20} />
             {isSidebarOpen && <span>Therapist AI</span>}
           </button>
 
           <button
-            className={`nav-item ${
-              activeModule === "dailyRoutine" ? "active" : ""
-            }`}
+            className={`nav-item ${activeModule === "dailyRoutine" ? "active" : ""}`}
             onClick={() => navigateTo("dailyRoutine")}
           >
-            <FiCalendar />
+            <FiCalendar size={20} />
             {isSidebarOpen && <span>Daily Routine</span>}
+          </button>
+
+          <button
+            className={`nav-item ${activeModule === "meditation" ? "active" : ""}`}
+            onClick={() => navigateTo("meditation")}
+          >
+            <FiMoon size={20} />
+            {isSidebarOpen && <span>Meditation</span>}
           </button>
 
           <button
             className={`nav-item ${activeModule === "mood" ? "active" : ""}`}
             onClick={() => navigateTo("mood")}
           >
-            <FiSmile />
+            <FiSmile size={20} />
             {isSidebarOpen && <span>Mood Tracker</span>}
           </button>
 
@@ -154,24 +156,33 @@ function App() {
           </button>
 
           <button
-            className={`nav-item ${
-              activeModule === "resources" ? "active" : ""
-            }`}
-            onClick={() => navigateTo("resources")}
+            className={`nav-item ${activeModule === "journaling" ? "active" : ""}`}
+            onClick={() => navigateTo("journaling")}
           >
-            <FiBookOpen />
-            {isSidebarOpen && <span>Resources</span>}
+            <FiBookOpen size={20} />
+            {isSidebarOpen && <span>Journaling</span>}
           </button>
 
-          <button className="nav-item">
-            <FiActivity />
-            {isSidebarOpen && <span>Insights</span>}
+          <button
+            className={`nav-item ${activeModule === "calmSounds" ? "active" : ""}`}
+            onClick={() => navigateTo("calmSounds")}
+          >
+            <FiActivity size={20} />
+            {isSidebarOpen && <span>Calm Sounds</span>}
+          </button>
+
+          <button
+            className={`nav-item ${activeModule === "resources" ? "active" : ""}`}
+            onClick={() => navigateTo("resources")}
+          >
+            <FiBookOpen size={20} />
+            {isSidebarOpen && <span>Resources</span>}
           </button>
         </nav>
 
         <div className="sidebar-footer">
           <button className="nav-item logout-btn" onClick={handleLogout}>
-            <FiLogOut />
+            <FiLogOut size={20} />
             {isSidebarOpen && <span>Logout</span>}
           </button>
         </div>
@@ -179,19 +190,24 @@ function App() {
 
       {/* MAIN CONTENT */}
       <main className="main-content">
-        {/* TOP NAVBAR */}
         <header className="navbar">
           <div className="navbar-left">
             <button className="menu-toggle" onClick={toggleSidebar}>
-              {isSidebarOpen ? <FiX /> : <FiMenu />}
+              {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
 
             <h2 className="page-title">
               {activeModule === "dashboard" && "Dashboard"}
               {activeModule === "chat" && "MindWell Therapist"}
               {activeModule === "dailyRoutine" && "Daily Routine"}
+              {activeModule === "meditation" && "Meditation & Focus"}
               {activeModule === "mood" && "Mood Tracker"}
+<<<<<<< HEAD
               {activeModule === "goals" && "Goal Setting"}
+=======
+              {activeModule === "journaling" && "Journaling"}
+              {activeModule === "calmSounds" && "Calm Sounds"}
+>>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
               {activeModule === "resources" && "Resources"}
             </h2>
           </div>
@@ -205,20 +221,25 @@ function App() {
           </div>
         </header>
 
-        {/* MODULE RENDER */}
-        <div className="content-scrollable">
+        {/* content-scrollable with chat-mode conditional class for better scrolling */}
+        <div
+          className={`content-scrollable ${activeModule === "chat" ? "chat-mode" : ""}`}
+        >
           {activeModule === "dashboard" && (
             <Dashboard onNavigate={navigateTo} />
           )}
-
           {activeModule === "chat" && <Chat />}
-
           {activeModule === "dailyRoutine" && <DailyRoutine />}
-
+          {activeModule === "meditation" && <Meditation />}
           {activeModule === "mood" && <MoodTracker />}
+<<<<<<< HEAD
 
           {activeModule === "goals" && <GoalSetting />} {/* ✅ CONNECTED */}
 
+=======
+          {activeModule === "journaling" && <Journaling />}
+          {activeModule === "calmSounds" && <CalmSounds />}
+>>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
           {activeModule === "resources" && <Resources />}
         </div>
       </main>

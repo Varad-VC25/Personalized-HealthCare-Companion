@@ -10,6 +10,7 @@ import {
   FiUsers,
   FiTrendingUp,
   FiTarget,
+  FiBookOpen, // Added for Resources
 } from "react-icons/fi";
 import "./Dashboard.css";
 
@@ -20,8 +21,15 @@ function Dashboard({ onNavigate }) {
       title: "MindWell AI",
       desc: "Chat with your personal AI therapist available 24/7.",
       icon: <FiMessageSquare size={28} />,
-      color: "var(--accent-color)",
+      color: "#0077b6", // Fixed: Use Hex instead of var() for inline rgba alpha to work
       isPrimary: true,
+    },
+    {
+      id: "meditation",
+      title: "Meditation",
+      desc: "Guided sessions to help you relax and focus.",
+      icon: <FiMoon size={28} />,
+      color: "#8b5cf6",
     },
     {
       id: "dailyRoutine",
@@ -38,18 +46,25 @@ function Dashboard({ onNavigate }) {
       color: "#f59e0b",
     },
     {
-      id: "meditation",
-      title: "Meditation",
-      desc: "Guided sessions to help you relax and focus.",
-      icon: <FiMoon size={28} />,
-      color: "#8b5cf6",
-    },
-    {
-      id: "journal",
+      id: "journaling",
       title: "Journaling",
       desc: "Write down your thoughts securely.",
       icon: <FiBook size={28} />,
       color: "#ec4899",
+    },
+    {
+      id: "calmSounds",
+      title: "Calm Sounds",
+      desc: "Curated playlists for relaxation.",
+      icon: <FiMusic size={28} />,
+      color: "#14b8a6",
+    },
+    {
+      id: "resources",
+      title: "Resources",
+      desc: "Articles and guides for mental wellness.",
+      icon: <FiBookOpen size={28} />,
+      color: "#0ea5e9",
     },
     {
       id: "sleep",
@@ -57,13 +72,6 @@ function Dashboard({ onNavigate }) {
       desc: "Analyze and improve your sleep quality.",
       icon: <FiActivity size={28} />,
       color: "#3b82f6",
-    },
-    {
-      id: "music",
-      title: "Calm Sounds",
-      desc: "Curated playlists for relaxation.",
-      icon: <FiMusic size={28} />,
-      color: "#14b8a6",
     },
     {
       id: "community",
@@ -88,6 +96,28 @@ function Dashboard({ onNavigate }) {
     },
   ];
 
+  // Helper to handle navigation only for implemented modules
+  const handleModuleClick = (id) => {
+    // List of modules that are fully implemented in App.js
+    const implementedModules = [
+      "chat",
+      "meditation",
+      "dailyRoutine",
+      "mood",
+      "journaling",
+      "calmSounds",
+      "resources",
+    ];
+
+    if (implementedModules.includes(id)) {
+      onNavigate(id);
+    } else {
+      // Optional: You could show a toast here for "Coming Soon"
+      // For now, we just don't navigate or navigate to dashboard (no-op)
+      console.log(`Module ${id} is coming soon!`);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header-section">
@@ -100,7 +130,11 @@ function Dashboard({ onNavigate }) {
           <div
             key={module.id}
             className={`module-card ${module.isPrimary ? "primary-card" : ""}`}
+<<<<<<< HEAD
             onClick={() => onNavigate(module.id)} 
+=======
+            onClick={() => handleModuleClick(module.id)}
+>>>>>>> 7f2fa0d0ac118324ff247919cf0a48fb34c1da4e
           >
             <div
               className="card-icon"
