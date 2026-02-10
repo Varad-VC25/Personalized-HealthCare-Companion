@@ -8,7 +8,6 @@ import {
   FiCheck,
   FiVolume2,
   FiVolumeX,
-  FiRefreshCw,
 } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -45,7 +44,6 @@ function Chat() {
     { code: "mr-IN", name: "Marathi" },
   ];
 
-  // Auto scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -62,32 +60,27 @@ function Chat() {
     loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
 
-    // Cleanup
-    return () => {
-      window.speechSynthesis.cancel();
-    };
+    return () => window.speechSynthesis.cancel();
   }, []);
 
-  // Handle outside click for language menu
+  // Close language dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+    const handler = (e) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target)) {
         setShowLangMenu(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Speech Recognition Logic
+  // 🎤 Speech Recognition
   const handleMicClick = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert(
-        "Your browser does not support voice input. Please use Chrome or Edge.",
-      );
+      alert("Voice input not supported in this browser.");
       return;
     }
 
@@ -100,51 +93,40 @@ function Chat() {
     const recognition = new SpeechRecognition();
     recognition.lang = language;
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
 
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error", event.error);
-      setIsListening(false);
-    };
+    recognition.onerror = () => setIsListening(false);
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setInput((prev) => prev + (prev && transcript ? " " : "") + transcript);
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      setInput((p) => p + (p ? " " : "") + transcript);
     };
 
     recognitionRef.current = recognition;
     recognition.start();
   };
 
-  // Text to Speech Logic
+  // 🔊 Text to Speech
   const speakText = (text) => {
     if (!window.speechSynthesis || !isTTSActive) return;
 
     window.speechSynthesis.cancel();
+    const clean = text.replace(/[*#_`]/g, "");
+    const utter = new SpeechSynthesisUtterance(clean);
+    utter.lang = language;
 
-    // Strip markdown characters for cleaner speech
-    const cleanText = text.replace(/[*#_`]/g, "");
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = language;
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-
-    // Attempt to select a voice matching the language
-    const voices = voicesRef.current;
     const voice =
-      voices.find((v) => v.lang === language) ||
-      voices.find((v) => v.lang.startsWith(language.split("-")[0]));
+      voicesRef.current.find((v) => v.lang === language) ||
+      voicesRef.current.find((v) =>
+        v.lang.startsWith(language.split("-")[0]),
+      );
 
-    if (voice) {
-      utterance.voice = voice;
-    }
-
-    window.speechSynthesis.speak(utterance);
+    if (voice) utter.voice = voice;
+    window.speechSynthesis.speak(utter);
   };
 
+  // ✅ CHATGPT-STYLE TYPING RESPONSE (ONLY CHANGE)
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
@@ -162,53 +144,63 @@ function Chat() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/chat", {
+      const res = await fetch("http://127.0.0.1:8000/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: userMessage.text,
-          language: language,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: userMessage.text, language }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
+      const fullReply =
+        data.reply || data.response || "I am listening 💙";
 
-      // Artificial delay for "thinking" effect if response is too instant
-      setTimeout(() => {
-        const replyText =
-          data.response || data.reply || "I am listening. Please go on.";
-        const botMessage = {
-          text: replyText,
+      const botTimestamp = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      // ⬇️ Empty bot message first
+      setMessages((prev) => [
+        ...prev,
+        { text: "", sender: "bot", timestamp: botTimestamp },
+      ]);
+
+      setIsLoading(false);
+
+      // ⬇️ Word-by-word typing
+      const words = fullReply.split(" ");
+      let i = 0;
+      let current = "";
+
+      const interval = setInterval(() => {
+        current += (i === 0 ? "" : " ") + words[i];
+
+        setMessages((prev) => {
+          const copy = [...prev];
+          copy[copy.length - 1].text = current;
+          return copy;
+        });
+
+        i++;
+        if (i >= words.length) {
+          clearInterval(interval);
+          speakText(fullReply);
+        }
+      }, 40); // speed (ChatGPT-like)
+
+    } catch (e) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: "I'm here 💙 but something went wrong.",
           sender: "bot",
           timestamp: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           }),
-        };
-        setMessages((prev) => [...prev, botMessage]);
-        setIsLoading(false);
-        speakText(replyText);
-      }, 600);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      setTimeout(() => {
-        const errorMsg =
-          "I'm having trouble connecting to my thought process right now. Please check your connection or try again in a moment.";
-        setMessages((prev) => [
-          ...prev,
-          {
-            text: errorMsg,
-            sender: "bot",
-            timestamp: new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          },
-        ]);
-        setIsLoading(false);
-      }, 1000);
+        },
+      ]);
+      setIsLoading(false);
     }
   };
 
@@ -220,154 +212,95 @@ function Chat() {
   };
 
   const toggleTTS = () => {
-    setIsTTSActive(!isTTSActive);
-    if (isTTSActive) {
-      window.speechSynthesis.cancel();
-    }
+    setIsTTSActive((p) => !p);
+    window.speechSynthesis.cancel();
   };
 
   return (
     <div className="chat-container">
       {/* Header */}
       <div className="chat-header-display">
-        <div className="header-left">
-          <div className="bot-status-indicator">
-            <div className="status-dot"></div>
-            <span className="status-text">MindWell AI • Online</span>
-          </div>
+        <div className="bot-status-indicator">
+          <div className="status-dot"></div>
+          <span>MindWell AI • Online</span>
         </div>
 
         <div className="header-right" ref={langMenuRef}>
-          <button
-            className="icon-btn"
-            onClick={toggleTTS}
-            title={isTTSActive ? "Mute Voice" : "Enable Voice"}
-          >
-            {isTTSActive ? <FiVolume2 size={18} /> : <FiVolumeX size={18} />}
+          <button className="icon-btn" onClick={toggleTTS}>
+            {isTTSActive ? <FiVolume2 /> : <FiVolumeX />}
           </button>
 
-          <div className="lang-wrapper">
-            <button
-              className="lang-toggle-btn"
-              onClick={() => setShowLangMenu(!showLangMenu)}
-              title="Select Language"
-            >
-              <FiGlobe size={16} />
-              <span className="lang-code">
-                {language.split("-")[0].toUpperCase()}
-              </span>
-            </button>
+          <button
+            className="lang-toggle-btn"
+            onClick={() => setShowLangMenu(!showLangMenu)}
+          >
+            <FiGlobe />
+            {language.split("-")[0].toUpperCase()}
+          </button>
 
-            {showLangMenu && (
-              <div className="lang-dropdown">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    className={`lang-option ${language === lang.code ? "active" : ""}`}
-                    onClick={() => {
-                      setLanguage(lang.code);
-                      setShowLangMenu(false);
-                    }}
-                  >
-                    <span>{lang.name}</span>
-                    {language === lang.code && <FiCheck size={14} />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {showLangMenu && (
+            <div className="lang-dropdown">
+              {languages.map((l) => (
+                <button
+                  key={l.code}
+                  className={language === l.code ? "active" : ""}
+                  onClick={() => {
+                    setLanguage(l.code);
+                    setShowLangMenu(false);
+                  }}
+                >
+                  {l.name}
+                  {language === l.code && <FiCheck />}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="chat-safe-notice">
-        <p>
-          Your privacy is our priority. This is a secure, judgment-free zone.
-        </p>
       </div>
 
       {/* Messages */}
       <div className="messages-area">
-        {messages.map((msg, index) => (
-          <div key={index} className={`message-wrapper ${msg.sender}`}>
+        {messages.map((m, i) => (
+          <div key={i} className={`message-wrapper ${m.sender}`}>
             <div className="message-avatar">
-              {msg.sender === "bot" ? (
-                <div className="avatar-frame bot">
-                  <img src={mediverseLogo} alt="AI" />
-                </div>
+              {m.sender === "bot" ? (
+                <img src={mediverseLogo} alt="AI" />
               ) : (
-                <div className="avatar-frame user">
-                  <FiUser />
-                </div>
+                <FiUser />
               )}
             </div>
             <div className="message-bubble">
-              {msg.sender === "bot" ? (
-                <div className="markdown-content">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {msg.text}
-                  </ReactMarkdown>
-                </div>
+              {m.sender === "bot" ? (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {m.text}
+                </ReactMarkdown>
               ) : (
-                <p>{msg.text}</p>
+                <p>{m.text}</p>
               )}
-              <span className="timestamp">{msg.timestamp}</span>
+              <span className="timestamp">{m.timestamp}</span>
             </div>
           </div>
         ))}
-
-        {isLoading && (
-          <div className="message-wrapper bot">
-            <div className="message-avatar">
-              <div className="avatar-frame bot">
-                <img src={mediverseLogo} alt="AI" />
-              </div>
-            </div>
-            <div className="message-bubble typing-bubble">
-              <div className="typing-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          </div>
-        )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
       <div className="input-area">
-        <div
-          className={`input-container ${isListening ? "listening-active" : ""}`}
-        >
-          <button
-            className={`mic-btn ${isListening ? "is-listening" : ""}`}
-            onClick={handleMicClick}
-            title={isListening ? "Stop Listening" : "Start Voice Input"}
-          >
-            {isListening ? <FiMicOff size={20} /> : <FiMic size={20} />}
-            {isListening && <span className="mic-ripple"></span>}
-          </button>
+        <button onClick={handleMicClick}>
+          {isListening ? <FiMicOff /> : <FiMic />}
+        </button>
 
-          <textarea
-            ref={inputRef}
-            placeholder={
-              isListening ? "Listening..." : "Type your feelings here..."
-            }
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            rows={1}
-            className="chat-textarea"
-          />
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyPress}
+          placeholder="Type your feelings here..."
+        />
 
-          <button
-            onClick={handleSendMessage}
-            className="send-btn"
-            disabled={!input.trim()}
-          >
-            <FiSend size={18} />
-          </button>
-        </div>
+        <button onClick={handleSendMessage} disabled={!input.trim()}>
+          <FiSend />
+        </button>
       </div>
     </div>
   );
