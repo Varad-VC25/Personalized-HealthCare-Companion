@@ -32,40 +32,7 @@ const calmSoundsData = [
     type: "Ambient",
     sounds: [
       { title: "Rainforest", url: "/sounds/nature1.mp3" },
-      { title: "Ocean Waves", url: "/sounds/nature2.mp3" },
-      { title: "Mountain Stream", url: "/sounds/nature3.mp3" }
-    ]
-  },
-  {
-    category: "Focus",
-    type: "Instrumental",
-    sounds: [
-      { title: "Piano Focus", url: "/sounds/focus1.mp3" },
-      { title: "Concentration Beats", url: "/sounds/focus2.mp3" }
-    ]
-  },
-  {
-    category: "Relaxation",
-    type: "Jazz",
-    sounds: [
-      { title: "Smooth Jazz Evening", url: "/sounds/jazz1.mp3" },
-      { title: "Coffee Shop Jazz", url: "/sounds/jazz2.mp3" }
-    ]
-  },
-  {
-    category: "Weather",
-    type: "Rain & Storm",
-    sounds: [
-      { title: "Rain Drops", url: "/sounds/rain1.mp3" },
-      { title: "Thunderstorm", url: "/sounds/rain2.mp3" }
-    ]
-  },
-  {
-    category: "Classical",
-    type: "Orchestral",
-    sounds: [
-      { title: "Mozart Relaxation", url: "/sounds/classical1.mp3" },
-      { title: "Beethoven Calm", url: "/sounds/classical2.mp3" }
+      { title: "Ocean Waves", url: "/sounds/nature2.mp3" }
     ]
   }
 ];
@@ -79,7 +46,6 @@ const CalmSounds = () => {
 
   const audioRef = useRef(new Audio());
 
-  // Play or pause a sound
   const playSound = (sound) => {
     const audio = audioRef.current;
 
@@ -93,29 +59,24 @@ const CalmSounds = () => {
     audio.play();
     setCurrentSound(sound);
     setIsPlaying(true);
-    setProgress(0);
   };
 
-  // Update progress and duration
   useEffect(() => {
     const audio = audioRef.current;
+
     const updateProgress = () => setProgress(audio.currentTime);
     const setMeta = () => setDuration(audio.duration || 0);
 
     audio.addEventListener("timeupdate", updateProgress);
     audio.addEventListener("loadedmetadata", setMeta);
 
-    // Cleanup function runs on component unmount
     return () => {
-      audio.pause(); // stop audio when leaving tab
-      setIsPlaying(false);
-      setCurrentSound(null);
+      audio.pause();
       audio.removeEventListener("timeupdate", updateProgress);
       audio.removeEventListener("loadedmetadata", setMeta);
     };
   }, []);
 
-  // Seek functionality
   const handleSeek = (e) => {
     const audio = audioRef.current;
     const value = Number(e.target.value);
@@ -123,7 +84,6 @@ const CalmSounds = () => {
     setProgress(value);
   };
 
-  // Format time mm:ss
   const formatTime = (time) => {
     if (!time || isNaN(time)) return "0:00";
     const min = Math.floor(time / 60);
@@ -131,94 +91,87 @@ const CalmSounds = () => {
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
   };
 
-  // Highlight matched text in song titles
-  const highlightMatch = (text, query) => {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, "gi");
-    const parts = text.split(regex);
-    return parts.map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="highlight">{part}</span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  // Filter songs based on search term
-  const filteredData = calmSoundsData
-    .map((cat) => ({
-      ...cat,
-      sounds: cat.sounds.filter((sound) =>
-        sound.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }))
-    .filter((cat) => cat.sounds.length > 0);
+  const filteredData = calmSoundsData.map((cat) => ({
+    ...cat,
+    sounds: cat.sounds.filter((s) =>
+      s.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }));
 
   return (
-    <div className="calm-container">
-      <h2 className="calm-title">
-        <FiMusic /> Calm Sounds & Music Therapy
-      </h2>
+    <div className="calm-wrapper">
+      <div className="background-glow"></div>
 
-      {/* SEARCH BAR */}
-      <div className="search-box">
-        <FiSearch style={{ position: "absolute", top: "50%", left: "12px", transform: "translateY(-50%)", color: "rgba(255,255,255,0.6)" }} />
+      <div className="calm-header">
+        <h1><FiMusic /> MindWell Sound Therapy</h1>
+        <p>Relax • Focus • Heal • Energize</p>
+      </div>
+
+      <div className="search-container">
+        <FiSearch className="search-icon" />
         <input
           type="text"
-          placeholder="🔍Search for a sound...!!"
+          placeholder="Search sounds..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ paddingLeft: "40px" }}
         />
       </div>
 
-      {/* SONG CARDS */}
-      {filteredData.length > 0 ? (
-        filteredData.map((cat, index) => (
+      <div className="categories-container">
+        {filteredData.map((cat, index) => (
           <div key={index} className="category-card">
-            <h3 className="category-title">
-              {cat.category} • {cat.type}
-            </h3>
+            <div className="category-header">
+              <h2>{cat.category}</h2>
+              <span>{cat.type}</span>
+            </div>
 
-            <div className="sounds-grid">
+            <div className="sound-grid">
               {cat.sounds.map((sound, i) => (
                 <div
                   key={i}
-                  className={`sound-box ${currentSound?.url === sound.url ? "active-sound" : ""}`}
+                  className={`sound-card ${currentSound?.url === sound.url ? "active" : ""}`}
                   onClick={() => playSound(sound)}
                 >
-                  <h4>{highlightMatch(sound.title, searchTerm)}</h4>
-                  <button className="play-btn">
-                    {currentSound?.url === sound.url && isPlaying ? <FiPause /> : <FiPlay />}
-                  </button>
+                  <div className="sound-overlay"></div>
+
+                  <div className="sound-content">
+                    <h3>{sound.title}</h3>
+                    <button className="play-circle">
+                      {currentSound?.url === sound.url && isPlaying ? (
+                        <FiPause />
+                      ) : (
+                        <FiPlay />
+                      )}
+                    </button>
+                  </div>
+
+                  {currentSound?.url === sound.url && isPlaying && (
+                    <div className="wave-animation">
+                      <span></span><span></span><span></span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           </div>
-        ))
-      ) : (
-        <p className="not-found" style={{ color: "white", textAlign: "center", marginTop: "20px" }}>
-          🔍 Sound not found
-        </p>
-      )}
+        ))}
+      </div>
 
-      {/* MUSIC PLAYER */}
-      {currentSound && isPlaying && (
-        <div className="music-player">
-          <div className="player-content">
-            <span className="now-playing">🎧 {currentSound.title}</span>
+      {currentSound && (
+        <div className="floating-player">
+          <div className="player-left">
+            🎧 {currentSound.title}
+          </div>
 
+          <div className="player-right">
             <input
               type="range"
               min="0"
               max={duration || 0}
               value={progress}
               onChange={handleSeek}
-              className="seek-bar"
             />
-
-            <div className="time-info">
+            <div className="time-row">
               <span>{formatTime(progress)}</span>
               <span>{formatTime(duration)}</span>
             </div>
