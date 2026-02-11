@@ -52,7 +52,6 @@ function Chat() {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Load voices
   useEffect(() => {
     const loadVoices = () => {
       voicesRef.current = window.speechSynthesis.getVoices();
@@ -63,7 +62,6 @@ function Chat() {
     return () => window.speechSynthesis.cancel();
   }, []);
 
-  // Close language dropdown on outside click
   useEffect(() => {
     const handler = (e) => {
       if (langMenuRef.current && !langMenuRef.current.contains(e.target)) {
@@ -74,7 +72,6 @@ function Chat() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // 🎤 Speech Recognition
   const handleMicClick = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -107,7 +104,6 @@ function Chat() {
     recognition.start();
   };
 
-  // 🔊 Text to Speech
   const speakText = (text) => {
     if (!window.speechSynthesis || !isTTSActive) return;
 
@@ -126,7 +122,6 @@ function Chat() {
     window.speechSynthesis.speak(utter);
   };
 
-  // ✅ CHATGPT-STYLE TYPING RESPONSE (ONLY CHANGE)
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
@@ -159,7 +154,6 @@ function Chat() {
         minute: "2-digit",
       });
 
-      // ⬇️ Empty bot message first
       setMessages((prev) => [
         ...prev,
         { text: "", sender: "bot", timestamp: botTimestamp },
@@ -167,7 +161,6 @@ function Chat() {
 
       setIsLoading(false);
 
-      // ⬇️ Word-by-word typing
       const words = fullReply.split(" ");
       let i = 0;
       let current = "";
@@ -186,7 +179,7 @@ function Chat() {
           clearInterval(interval);
           speakText(fullReply);
         }
-      }, 40); // speed (ChatGPT-like)
+      }, 40);
 
     } catch (e) {
       setMessages((prev) => [
@@ -218,7 +211,6 @@ function Chat() {
 
   return (
     <div className="chat-container">
-      {/* Header */}
       <div className="chat-header-display">
         <div className="bot-status-indicator">
           <div className="status-dot"></div>
@@ -243,7 +235,9 @@ function Chat() {
               {languages.map((l) => (
                 <button
                   key={l.code}
-                  className={language === l.code ? "active" : ""}
+                  className={`lang-option ${
+                    language === l.code ? "active" : ""
+                  }`}
                   onClick={() => {
                     setLanguage(l.code);
                     setShowLangMenu(false);
@@ -258,49 +252,81 @@ function Chat() {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="messages-area">
-        {messages.map((m, i) => (
-          <div key={i} className={`message-wrapper ${m.sender}`}>
-            <div className="message-avatar">
-              {m.sender === "bot" ? (
-                <img src={mediverseLogo} alt="AI" />
-              ) : (
-                <FiUser />
-              )}
-            </div>
-            <div className="message-bubble">
-              {m.sender === "bot" ? (
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {m.text}
-                </ReactMarkdown>
-              ) : (
-                <p>{m.text}</p>
-              )}
-              <span className="timestamp">{m.timestamp}</span>
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+    <div className="messages-area">
+  {messages.map((m, i) => (
+    <div key={i} className={`message-wrapper ${m.sender}`}>
+      <div className={`avatar-frame ${m.sender}`}>
+        {m.sender === "bot" ? (
+          <img src={mediverseLogo} alt="AI" />
+        ) : (
+          <FiUser />
+        )}
       </div>
 
-      {/* Input */}
+      <div className="message-bubble">
+        {m.sender === "bot" ? (
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {m.text}
+          </ReactMarkdown>
+        ) : (
+          <p>{m.text}</p>
+        )}
+        <span className="timestamp">{m.timestamp}</span>
+      </div>
+    </div>
+  ))}
+
+  {/* ✅ ADD THIS TYPING INDICATOR */}
+  {isLoading && (
+    <div className="message-wrapper bot">
+      <div className="avatar-frame bot">
+        <img src={mediverseLogo} alt="AI" />
+      </div>
+
+      <div className="message-bubble typing-bubble">
+        <span className="typing-text"><b>MindWell AI</b> 💙 is typing!!</span>
+        <span className="dot"></span>
+        <span className="dot"></span>
+        <span className="dot"></span>
+      </div>
+    </div>
+  )}
+
+  <div ref={messagesEndRef} />
+</div>
+
       <div className="input-area">
-        <button onClick={handleMicClick}>
-          {isListening ? <FiMicOff /> : <FiMic />}
-        </button>
+        <div
+          className={`input-container ${
+            isListening ? "listening-active" : ""
+          }`}
+        >
+          <button
+            className={`mic-btn ${
+              isListening ? "is-listening" : ""
+            }`}
+            onClick={handleMicClick}
+          >
+            {isListening ? <FiMicOff /> : <FiMic />}
+          </button>
 
-        <textarea
-          ref={inputRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Type your feelings here..."
-        />
+          <textarea
+            ref={inputRef}
+            className="chat-textarea"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="Type your feelings here...!!"
+          />
 
-        <button onClick={handleSendMessage} disabled={!input.trim()}>
-          <FiSend />
-        </button>
+          <button
+            className="send-btn"
+            onClick={handleSendMessage}
+            disabled={!input.trim()}
+          >
+            <FiSend />
+          </button>
+        </div>
       </div>
     </div>
   );
