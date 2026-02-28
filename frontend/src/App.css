@@ -13,7 +13,7 @@
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 50;
   box-shadow: var(--shadow-lg);
 }
@@ -36,23 +36,27 @@
 }
 
 .app-logo {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .app-logo:hover {
-  transform: rotate(10deg) scale(1.1);
+  transform: rotate(360deg) scale(1.1);
 }
 
 .app-name {
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--accent-color);
+  font-weight: 800;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, var(--accent-color), #4cc9f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   white-space: nowrap;
   opacity: 1;
   transition: opacity 0.2s;
+  letter-spacing: -0.5px;
 }
 
 .sidebar-collapsed .app-name {
@@ -73,16 +77,17 @@
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: 16px;
   background: transparent;
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   gap: 12px;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   width: 100%;
+  margin-bottom: 4px;
 }
 
 .sidebar-collapsed .nav-item {
@@ -102,14 +107,14 @@
 }
 
 .nav-item.active {
-  background-color: var(--accent-color);
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
   color: #fff;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(var(--accent-color), 0.3);
 }
 
 .nav-item.active:hover {
-  background-color: var(--accent-hover);
-  transform: none;
+  transform: translateX(4px);
+  box-shadow: 0 6px 16px rgba(var(--accent-color), 0.4);
 }
 
 .sidebar-footer {
@@ -137,13 +142,20 @@
 
 .navbar {
   height: 70px;
-  background-color: var(--bg-secondary);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 24px;
   z-index: 40;
+  position: sticky;
+  top: 0;
+}
+
+[data-theme='dark'] .navbar {
+  background-color: rgba(30, 41, 59, 0.8);
 }
 
 .navbar-left {
@@ -237,6 +249,7 @@
   height: auto;
   z-index: 2;
   filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.2));
+  margin-top: 2rem;
 }
 
 .auth-welcome h1 {

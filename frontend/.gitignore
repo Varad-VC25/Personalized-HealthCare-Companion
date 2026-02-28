@@ -5,6 +5,13 @@
 /.pnp
 .pnp.js
 
+# =====================
+# Python Backend
+# =====================
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+
 # testing
 /coverage
 

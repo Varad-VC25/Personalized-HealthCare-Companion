@@ -64,6 +64,10 @@
   color: #059669;
 }
 
+[data-theme='dark'] .status-text {
+  color: #34d399;
+}
+
 /* Header Right Controls */
 .header-right {
   display: flex;
@@ -222,7 +226,7 @@
 }
 
 .avatar-frame.bot {
-  background-color: #fff;
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   padding: 4px;
 }
@@ -473,11 +477,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #f1f5f9;
+  background: var(--chat-bot-bg);
   padding: 10px 14px;
   border-radius: 14px;
   font-size: 14px;
-  color: #334155;
+  color: var(--chat-bot-text);
 }
 
 .typing-text {
@@ -487,7 +491,7 @@
 .dot {
   height: 6px;
   width: 6px;
-  background: #64748b;
+  background: var(--text-secondary);
   border-radius: 50%;
   animation: typing 1.2s infinite;
 }
@@ -501,7 +505,18 @@
 }
 
 @keyframes typing {
-  0% { opacity: 0.2; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-3px); }
-  100% { opacity: 0.2; transform: translateY(0); }
+  0% {
+    opacity: 0.2;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: translateY(0);
+  }
 }

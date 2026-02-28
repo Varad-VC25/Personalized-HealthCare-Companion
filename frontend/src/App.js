@@ -11,7 +11,6 @@ import MoodTracker from "./components/MoodTracker";
 import Journaling from "./components/Journaling";
 import CalmSounds from "./components/CalmSounds";
 import Resources from "./components/Resources/Resources";
-import GoalSetting from "./components/GoalSetting"; // ✅ ADDED
 import Meditation from "./components/Meditation"; // Imported Meditation
 
 import mediverseLogo from "./mediverseLogo.png";
@@ -27,7 +26,6 @@ import {
   FiLogOut,
   FiMenu,
   FiX,
-  FiTarget, // ✅ ADDED
   FiMoon, // Imported for Meditation icon
 } from "react-icons/fi";
 
@@ -65,15 +63,22 @@ function App() {
       <div className="auth-layout">
         <div className="auth-wrapper">
           <div className="auth-left">
-            <img src={doctorImage} alt="Doctor" className="doctor-img" />
             <div className="auth-welcome">
               <h1>Welcome to MindWell</h1>
               <p>Your personalized mental health companion</p>
             </div>
+            <img
+              src={doctorImage}
+              alt="MindWell Doctor"
+              className="doctor-img"
+            />
           </div>
           <div className="auth-right">
             {showSignup ? (
-              <Signup onSignupSuccess={() => setShowSignup(false)} />
+              <Signup
+                onSignupSuccess={() => setShowSignup(false)}
+                onSwitch={() => setShowSignup(false)}
+              />
             ) : (
               <Login
                 onLoginSuccess={handleLoginSuccess}
@@ -140,15 +145,6 @@ function App() {
             {isSidebarOpen && <span>Mood Tracker</span>}
           </button>
 
-          {/* ✅ GOAL SETTING */}
-          <button
-            className={`nav-item ${activeModule === "goals" ? "active" : ""}`}
-            onClick={() => navigateTo("goals")}
-          >
-            <FiTarget />
-            {isSidebarOpen && <span>Goals</span>}
-          </button>
-
           <button
             className={`nav-item ${activeModule === "journaling" ? "active" : ""}`}
             onClick={() => navigateTo("journaling")}
@@ -196,7 +192,6 @@ function App() {
               {activeModule === "dailyRoutine" && "Daily Routine"}
               {activeModule === "meditation" && "Meditation & Focus"}
               {activeModule === "mood" && "Mood Tracker"}
-              {activeModule === "goals" && "Goal Setting"}
               {activeModule === "journaling" && "Journaling"}
               {activeModule === "calmSounds" && "Calm Sounds"}
               {activeModule === "resources" && "Resources"}
@@ -223,9 +218,6 @@ function App() {
           {activeModule === "dailyRoutine" && <DailyRoutine />}
           {activeModule === "meditation" && <Meditation />}
           {activeModule === "mood" && <MoodTracker />}
-
-          {activeModule === "goals" && <GoalSetting />} {/* ✅ CONNECTED */}
-
           {activeModule === "journaling" && <Journaling />}
           {activeModule === "calmSounds" && <CalmSounds />}
           {activeModule === "resources" && <Resources />}

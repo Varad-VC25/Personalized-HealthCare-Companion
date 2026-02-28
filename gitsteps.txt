@@ -1,3 +1,17 @@
+how to run 
+1. cd backend
+uvicorn main:app --reload
+
+2. cd frontend
+npm start
+
+
+use below dummy email: jirag74304@dolofan.com
+password: 12345678
+
+
+
+
 Fetch the latest commits from the remote
         git fetch origin
 

@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  FiArrowLeft,
-  FiTrendingUp,
-  FiCalendar,
-  FiEdit3,
-  FiStar,
-} from "react-icons/fi";
+import { FiTrendingUp, FiCalendar, FiSmile } from "react-icons/fi";
 import "./MoodTracker.css";
 
 const MOODS = [
@@ -29,7 +23,7 @@ const TAGS = [
   "Social",
 ];
 
-export default function MoodTracker({ onBack }) {
+export default function MoodTracker() {
   const today = new Date().toDateString();
 
   const [mood, setMood] = useState(null);
@@ -68,10 +62,7 @@ export default function MoodTracker({ onBack }) {
       score: mood.score,
     };
 
-    const updated = [
-      entry,
-      ...history.filter((e) => e.date !== today),
-    ];
+    const updated = [entry, ...history.filter((e) => e.date !== today)];
 
     setHistory(updated);
     localStorage.setItem("moodHistory", JSON.stringify(updated));
@@ -81,10 +72,7 @@ export default function MoodTracker({ onBack }) {
   const avgMood =
     history.length === 0
       ? 0
-      : (
-          history.reduce((a, b) => a + b.score, 0) /
-          history.length
-        ).toFixed(1);
+      : (history.reduce((a, b) => a + b.score, 0) / history.length).toFixed(1);
 
   const streak = (() => {
     let s = 0;
@@ -102,12 +90,10 @@ export default function MoodTracker({ onBack }) {
     <div className="mood-root">
       {/* HEADER */}
       <div className="mood-header">
-        <button className="back-btn" onClick={onBack}>
-          <FiArrowLeft /> Back
-        </button>
-
         <div>
-          <h1>Mood Tracker</h1>
+          <h1>
+            <FiSmile /> Mood Tracker
+          </h1>
           <p>Understand your emotions deeply 🌱</p>
         </div>
       </div>
@@ -119,9 +105,7 @@ export default function MoodTracker({ onBack }) {
           {MOODS.map((m) => (
             <button
               key={m.id}
-              className={`mood-card ${
-                mood?.id === m.id ? "active" : ""
-              }`}
+              className={`mood-card ${mood?.id === m.id ? "active" : ""}`}
               onClick={() => setMood(m)}
             >
               <span className="emoji">{m.emoji}</span>
@@ -166,14 +150,12 @@ export default function MoodTracker({ onBack }) {
             {TAGS.map((t) => (
               <button
                 key={t}
-                className={`tag ${
-                  tags.includes(t) ? "active" : ""
-                }`}
+                className={`tag ${tags.includes(t) ? "active" : ""}`}
                 onClick={() =>
                   setTags((prev) =>
                     prev.includes(t)
                       ? prev.filter((x) => x !== t)
-                      : [...prev, t]
+                      : [...prev, t],
                   )
                 }
               >

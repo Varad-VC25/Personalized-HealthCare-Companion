@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  FiArrowLeft,
-  FiPlus,
-  FiTrash2,
-  FiEdit2,
-  FiStar,
-  FiSmile,
-} from "react-icons/fi";
+import { FiPlus, FiTrash2, FiEdit2, FiStar, FiSun } from "react-icons/fi";
 import "./DailyRoutine.css";
 
 const CATEGORIES = [
@@ -21,7 +14,7 @@ const CATEGORIES = [
 
 const MOODS = ["😄", "😊", "😐", "😔", "😴"];
 
-export default function DailyRoutine({ onBack }) {
+export default function DailyRoutine() {
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
@@ -76,9 +69,7 @@ export default function DailyRoutine({ onBack }) {
 
   const toggleTask = (id) =>
     setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, done: !t.done } : t
-      )
+      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
     );
 
   const deleteTask = (id) =>
@@ -86,34 +77,25 @@ export default function DailyRoutine({ onBack }) {
 
   const toggleEdit = (id) =>
     setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, editing: !t.editing } : t
-      )
+      prev.map((t) => (t.id === id ? { ...t, editing: !t.editing } : t)),
     );
 
   const updateTitle = (id, value) =>
     setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, title: value } : t
-      )
+      prev.map((t) => (t.id === id ? { ...t, title: value } : t)),
     );
 
   const setMood = (id, mood) =>
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, mood } : t
-      )
-    );
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, mood } : t)));
 
   return (
     <div className="daily-routine">
       {/* HEADER */}
       <div className="routine-header">
-        <button className="back-btn" onClick={onBack}>
-          <FiArrowLeft /> Back
-        </button>
         <div>
-          <h1>Daily Routine</h1>
+          <h1>
+            <FiSun /> Daily Routine
+          </h1>
           <p>{today}</p>
         </div>
       </div>
@@ -141,8 +123,8 @@ export default function DailyRoutine({ onBack }) {
             {progress === 100
               ? "Perfect day 🌟"
               : progress >= 60
-              ? "Almost there 💪"
-              : "One task at a time 🌱"}
+                ? "Almost there 💪"
+                : "One task at a time 🌱"}
           </p>
         </div>
       </div>
@@ -166,9 +148,7 @@ export default function DailyRoutine({ onBack }) {
                     {task.editing ? (
                       <input
                         value={task.title}
-                        onChange={(e) =>
-                          updateTitle(task.id, e.target.value)
-                        }
+                        onChange={(e) => updateTitle(task.id, e.target.value)}
                         onBlur={() => toggleEdit(task.id)}
                         autoFocus
                       />
