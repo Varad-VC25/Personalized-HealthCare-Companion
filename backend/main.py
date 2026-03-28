@@ -199,3 +199,40 @@ async def verify_otp(request: Request):
 
     del otp_store[email]
     return {"success": True}
+
+@app.post("/send-reset-otp")
+async def send_reset_otp(request: Request):
+    data = await request.json()
+    email = data.get("email")
+
+    user = users_collection.find_one({"username": email})
+    if not user:
+        return {"success": False, "message": "User not found"}
+
+    otp = str(secrets.randbelow(1000000)).zfill(6)
+    otp_store[email] = {"otp": otp, "time": time.time()}
+
+    await send_otp_email(email, otp)
+    return {"success": True}
+
+@app.post("/reset-password")
+async def reset_password(request: Request):
+    data = await request.json()
+    email = data.get("email")
+    otp = data.get("otp")
+    new_password = data.get("new_password")
+
+    record = otp_store.get(email)
+    if not record or record["otp"] != otp:
+        return {"success": False, "message": "Invalid OTP"}
+
+    if time.time() - record["time"] > 300:
+        return {"success": False, "message": "OTP expired"}
+
+    users_collection.update_one(
+        {"username": email},
+        {"$set": {"password": pwd_context.hash(new_password)}}
+    )
+
+    del otp_store[email]
+    return {"success": True}
